@@ -1,0 +1,10 @@
+
+span + span {
+    margin-left: 20px;
+}
+
+.infos {
+    margin: auto;
+    text-align: center;
+    color:#9d9d9d;
+}
