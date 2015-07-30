@@ -13,17 +13,4 @@ I made the *BEYOND Touch* apps on [iOS](http://itunes.apple.com/app/beyond-touc
 
 I you want to reach me, follow one of the links below!
 
-<div class="infos">
-<span>
-	<a href="{{ site.author.twitter }}" target="_blank"><i class="fa fa-twitter"></i></a>
-</span>
-<span>
-	<a href="{{ site.author.github }}" target="_blank"><i class="fa fa-github"></i></a>
-</span>
-<span>
-	<a href="{{ site.author.linkedin }}" target="_blank"><i class="fa fa-linkedin-square"></i></a>
-</span>
-<span>
-	<a href="mailto:contact@{{ site.author.email }}?subject=Contact from {{ site.domain_name }}" target="_blank"><i class="fa fa-envelope"></i></a>
-</span>
-</div>
+{% include infos.html %}
