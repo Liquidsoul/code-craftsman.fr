@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Code Craftsman</title>
+ <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
+ <link href="http://code-craftsman.fr/"/>
+ <updated>2015-07-30T22:29:17+02:00</updated>
+ <id>http://code-craftsman.fr</id>
+ <author>
+   <name>Sébastien Duperron</name>
+   <email>contact@code-craftsman.fr</email>
+ </author>
+
+ 
+ <entry>
+   <title>My very first post</title>
+   <link href="http://code-craftsman.fr/2015/07/30/my-very-first-post/"/>
+   <updated>2015-07-30T00:00:00+02:00</updated>
+   <id>http://code-craftsman.fr/2015/07/30/my-very-first-post</id>
+   <content type="html">&lt;p&gt;Hi!&lt;/p&gt;
+
+&lt;p&gt;This is my first blog post ever and, hopefully, it will be the first of many to come.&lt;/p&gt;
+</content>
+ </entry>
+ 
+
+</feed>
