@@ -42,8 +42,14 @@ pushd $SITE_FOLDER > /dev/null
 
 # FIXME: delete local files (except .git folder) to commit deletions
 git add .
-# TODO: set commit message with integrated commits
-git commit -a -m "Site update" || die "Commit failed"
+
+# Generate commit message with list of commits from $SOURCE_BRANCH_NAME to integrate
+LAST_COMMIT_DATE=`git log -1 --format=%cd $TARGET_BRANCH_NAME`
+COMMITS_TO_INTEGRATE=`git log --since="$LAST_COMMIT_DATE" --format=%s $SOURCE_BRANCH_NAME`
+COMMIT_MSG="Site update\n\n$COMMITS_TO_INTEGRATE"
+
+# Commit and push
+git commit -a -m "$COMMIT_MSG" || die "Commit failed"
 git push || die "Push failed"
 
 popd > /dev/null
