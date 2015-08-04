@@ -55,7 +55,7 @@ pushd $SITE_FOLDER > /dev/null
 git add . || die "Failed to add modifications in '$SITE_FOLDER' local repository"
 
 # Commit and push
-git commit -a -m "$COMMIT_MSG" || die "Commit failed"
+git commit -m "$(echo -e "$COMMIT_MSG")" || die "Commit failed"
 git push || die "Push failed"
 
 popd > /dev/null
