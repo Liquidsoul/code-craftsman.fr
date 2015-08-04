@@ -7,3 +7,22 @@
 .infos span {
 	margin-right: 2vw;
 }
+
+pre, code {
+	hyphens: none;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	overflow:scroll;
+	width: auto;
+	font-family: 'Consolas';
+}
+
+pre:hover, code:hover {
+	width: 800px;
+}
+
+@media only screen and (max-width: 767px) {
+	pre:hover {
+		width: 100%;
+	}
+}
