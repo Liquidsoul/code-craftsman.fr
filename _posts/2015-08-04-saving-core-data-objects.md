@@ -12,7 +12,7 @@ I have started to use it just a few months back, and I've been using it extensiv
 During this time, I have learned some things about `NSManagedObjectContext` that I want to share.
 Here, I'll be explaining how the saving mechanism works with multiple contexts created using different methods.
 
-We'll be working with very basic Core Data model which will contain only one single entity.
+We'll be working with a very basic Core Data model which will contain only one single entity.
 
 	+-----------------+
 	| Person          |
@@ -25,7 +25,7 @@ Here is our context:
  * we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)
 
 ## The first approach
-To get started quickly with our topic, let's perform the heavy lifting of creating the model and persistent store coordinator behind the scene:
+To get started quickly with our topic, the heavy lifting of creating the model and persistent store coordinator will be done behind the scene[^1]:
 
 {% highlight swift %}
 import CoreData
@@ -33,33 +33,29 @@ import CoreData
 let persistentStoreCoordinator = try createPersistentStoreCoordinator()
 
 {% endhighlight %}
-So now, back to our topic.
-
-So let's setup our main context:
+Now that we have our persistentStoreCoordinator, we create our main context:
 {% highlight swift %}
 let mainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
 {% endhighlight %}
-As we want to share data between contexts, let's create a child context for our background update:
+As we want to share data between the two contexts, we create a child context for our background update:
 {% highlight swift %}
 let childContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 childContext.parentContext = mainContext
 
 {% endhighlight %}
-Let's create a new entity in the child context as if it came from the server:
+Then, we create a new entity in the child context as if it came from the server[^1]:
 {% highlight swift %}
 let person = addPersonToContext(childContext, name: "John")
 
 {% endhighlight %}
-Now we save our content [^1]:
-
-[^1]: Note that you should use `performBlock()` to execute calls on a `NSManagedObjectContext` to ensure that the correct thread is using it.
+Now we save our content[^2]:
 {% highlight swift %}
 try childContext.save()
 
 {% endhighlight %}
-let's check that we have the new content in the main context using a fetch request:
+Let's check that we have the new content in the main context using a fetch request:
 {% highlight swift %}
 let results = try mainContext.executeFetchRequest(NSFetchRequest(entityName: "Person"))
 if let createdPerson = results.first as? Person {
@@ -96,12 +92,17 @@ Let's have a look at the official documentation of `save()`:
 
 This can be misleading. When one see `parent store` he can understand `the parent persitent store of my context hierarchy`.
 However, what is meant by `parent store` is either:
+
 * the persistentStoreCoordinator
 * the parentContext
 
 So, if your context was setup with a parent context, changes are commited to his parent but no further.
-To save it to the persistent store, you'll need to performs `save()` calls on context all the way up in the hierarchy.
+To save it to the persistent store, you'll need to call `save()` on contexts all the way up in the hierarchy until you reach the persistent store.
 
+
+[^1]: `createPersistentStoreCoordinator` and `addPersonToContext` are helper functions to shorten the code in the article. You can find the code [here] [CoreDataSetup]
+[^2]: Note that you should use `performBlock()` to execute calls on a `NSManagedObjectContext` to ensure that the correct thread is using it.
+[CoreDataSetup]: https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift
 
 
 ## Fixing our first approach
@@ -118,27 +119,25 @@ mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
 {% endhighlight %}
 But to spice it a little, let's create another entity that will be living in the main context.
-Note that this entity could've come from another child context:
+For example, this entity could've come from another child context:
 {% highlight swift %}
 let ourOtherPerson = addPersonToContext(mainContext, name: "Billy")
 
 {% endhighlight %}
-And then let's say we've got our server data we want to save in the persistent store:
+Now, we continue as before with the server data we want to save in the persistent store:
 {% highlight swift %}
 let childContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 childContext.parentContext = mainContext
 let person = addPersonToContext(childContext, name: "John")
 
 {% endhighlight %}
-Now, as we've learned before, we save our content from the child to the main context[^2]:
-
-[^2]: as told before[^1], don't forget to use `performBlock()` to call CoreData context code
+Now, as we've learned before, we save our content in the child context and then in the main context[^3]:
 {% highlight swift %}
 try childContext.save()
 try mainContext.save()
 
 {% endhighlight %}
-So now we should have saved our "John" in the persistent store, let's check that:
+We have saved our "John" in the persistent store, let's check that:
 {% highlight swift %}
 let secondLaunchMainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 secondLaunchMainContext.persistentStoreCoordinator = persistentStoreCoordinator
@@ -154,7 +153,7 @@ if let createdPerson = try secondLaunchMainContext.executeFetchRequest(fetchRequ
 {% endhighlight %}
 Problem solved!
 
-But wait... what happened to our "Billy". We wanted to store "John" into the persitent store, not "Billy":
+But wait... what happened to our "Billy". We wanted to store only "John" into the persitent store, not "Billy":
 {% highlight swift %}
 fetchRequest.predicate = NSPredicate(format:"%K like %@", "name", "Billy")
 if let createdPerson = try secondLaunchMainContext.executeFetchRequest(fetchRequest).first as? Person {
@@ -170,10 +169,12 @@ Yet, this seems coherent with the fact that, as we've performed a `save()` on th
 
 So what can we do if we only want to save John without saving Billy?
 
+[^3]: as told before[^2], don't forget to use `performBlock()` to call CoreData context code
+
 
 ## Confined save
 
-So, as before, our main context with our "Billy"
+Let's do it again, we setup our main context with "Billy"
 
 {% highlight swift %}
 import CoreData
@@ -184,8 +185,8 @@ mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 let ourOtherPerson = addPersonToContext(mainContext, name: "Billy")
 
 {% endhighlight %}
-Therefore, to prevent "Billy" to be saved while we just wanted to save "John", we will not create our editing context from the main one.
-We will create what I call a *sibling* context which share the same store as the main one:
+Then, to prevent "Billy" to be saved while we just wanted to save "John", we will not create our editing context as a child of the main.
+We will create what we'll call a *sibling* context. These are contexts that share the same persitent store coordinator:
 
 {% highlight swift %}
 let siblingContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
@@ -226,10 +227,14 @@ We did it!
 
 ## Conclusion
 
-We learned that:
+Here, we learned that:
 
 * calling `save()` on a context will only send changes one step up the hierarchy
 * `save()` will commit changes contained in the whole context
 
-As a side note: for the sake of simplicity here, we have only worked with entity insertion.
+I hope that this may help anyone who did not yet grasp how Core Data save its content throught contexts.
+
+
+__As a side note__: for the sake of simplicity here, we have only worked with entity insertion.
 When you start playing with entity attributes, you'll need to perform some `refreshObject()` calls to see the saved values in other contexts.
+
