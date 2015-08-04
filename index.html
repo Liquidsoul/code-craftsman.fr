@@ -133,7 +133,7 @@ I have started to use it just a few months back, and I’ve been using it extens
 During this time, I have learned some things about <code>NSManagedObjectContext</code> that I want to share.<br />
 Here, I’ll be explaining how the saving mechanism works with multiple contexts created using different methods.</p>
 
-<p>We’ll be working with very basic Core Data model which will contain only one single entity.</p>
+<p>We’ll be working with a very basic Core Data model which will contain only one single entity.</p>
 
 <pre><code>+-----------------+
 | Person          |
@@ -147,33 +147,31 @@ Here, I’ll be explaining how the saving mechanism works with multiple contexts
  * we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)</p>
 
 <h2 id="the-first-approach">The first approach</h2>
-<p>To get started quickly with our topic, let’s perform the heavy lifting of creating the model and persistent store coordinator behind the scene:</p>
+<p>To get started quickly with our topic, the heavy lifting of creating the model and persistent store coordinator will be done behind the scene<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">import</span> <span class="n">CoreData</span>
 
 <span class="k">let</span> <span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">try</span> <span class="n">createPersistentStoreCoordinator</span><span class="p">()</span></code></pre></div>
 
-<p>So now, back to our topic.</p>
-
-<p>So let’s setup our main context:</p>
+<p>Now that we have our persistentStoreCoordinator, we create our main context:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">mainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
 <span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span></code></pre></div>
 
-<p>As we want to share data between contexts, let’s create a child context for our background update:</p>
+<p>As we want to share data between the two contexts, we create a child context for our background update:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">childContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
 <span class="n">childContext</span><span class="p">.</span><span class="n">parentContext</span> <span class="o">=</span> <span class="n">mainContext</span></code></pre></div>
 
-<p>Let’s create a new entity in the child context as if it came from the server:</p>
+<p>Then, we create a new entity in the child context as if it came from the server<sup id="fnref:1:1"><a href="#fn:1" class="footnote">1</a></sup>:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">person</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">childContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">)</span></code></pre></div>
 
-<p>Now we save our content <sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>:</p>
+<p>Now we save our content<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">try</span> <span class="n">childContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></div>
 
-<p>let’s check that we have the new content in the main context using a fetch request:</p>
+<p>Let’s check that we have the new content in the main context using a fetch request:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">results</span> <span class="o">=</span> <span class="n">try</span> <span class="n">mainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="bp">NSFetchRequest</span><span class="p">(</span><span class="nl">entityName</span><span class="p">:</span> <span class="s">&quot;Person&quot;</span><span class="p">))</span>
 <span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">results</span><span class="p">.</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
@@ -207,12 +205,15 @@ parent store.
 </code></pre>
 
 <p>This can be misleading. When one see <code>parent store</code> he can understand <code>the parent persitent store of my context hierarchy</code>.<br />
-However, what is meant by <code>parent store</code> is either:<br />
-* the persistentStoreCoordinator<br />
-* the parentContext</p>
+However, what is meant by <code>parent store</code> is either:</p>
+
+<ul>
+  <li>the persistentStoreCoordinator</li>
+  <li>the parentContext</li>
+</ul>
 
 <p>So, if your context was setup with a parent context, changes are commited to his parent but no further.<br />
-To save it to the persistent store, you’ll need to performs <code>save()</code> calls on context all the way up in the hierarchy.</p>
+To save it to the persistent store, you’ll need to call <code>save()</code> on contexts all the way up in the hierarchy until you reach the persistent store.</p>
 
 <h2 id="fixing-our-first-approach">Fixing our first approach</h2>
 
@@ -225,22 +226,22 @@ To save it to the persistent store, you’ll need to performs <code>save()</code
 <span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span></code></pre></div>
 
 <p>But to spice it a little, let’s create another entity that will be living in the main context.<br />
-Note that this entity could’ve come from another child context:</p>
+For example, this entity could’ve come from another child context:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">ourOtherPerson</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">mainContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span></code></pre></div>
 
-<p>And then let’s say we’ve got our server data we want to save in the persistent store:</p>
+<p>Now, we continue as before with the server data we want to save in the persistent store:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">childContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
 <span class="n">childContext</span><span class="p">.</span><span class="n">parentContext</span> <span class="o">=</span> <span class="n">mainContext</span>
 <span class="k">let</span> <span class="n">person</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">childContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">)</span></code></pre></div>
 
-<p>Now, as we’ve learned before, we save our content from the child to the main context<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>:</p>
+<p>Now, as we’ve learned before, we save our content in the child context and then in the main context<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">try</span> <span class="n">childContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
 <span class="n">try</span> <span class="n">mainContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></div>
 
-<p>So now we should have saved our “John” in the persistent store, let’s check that:</p>
+<p>We have saved our “John” in the persistent store, let’s check that:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">secondLaunchMainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
 <span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
@@ -255,7 +256,7 @@ Note that this entity could’ve come from another child context:</p>
 
 <p>Problem solved!</p>
 
-<p>But wait… what happened to our “Billy”. We wanted to store “John” into the persitent store, not “Billy”:</p>
+<p>But wait… what happened to our “Billy”. We wanted to store only “John” into the persitent store, not “Billy”:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fetchRequest</span><span class="p">.</span><span class="n">predicate</span> <span class="o">=</span> <span class="bp">NSPredicate</span><span class="p">(</span><span class="nl">format</span><span class="p">:</span><span class="s">&quot;%K like %@&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span>
 <span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">try</span> <span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="n">fetchRequest</span><span class="p">).</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
@@ -272,7 +273,7 @@ Note that this entity could’ve come from another child context:</p>
 
 <h2 id="confined-save">Confined save</h2>
 
-<p>So, as before, our main context with our “Billy”</p>
+<p>Let’s do it again, we setup our main context with “Billy”</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">import</span> <span class="n">CoreData</span>
 
@@ -281,8 +282,8 @@ Note that this entity could’ve come from another child context:</p>
 <span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
 <span class="k">let</span> <span class="n">ourOtherPerson</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">mainContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span></code></pre></div>
 
-<p>Therefore, to prevent “Billy” to be saved while we just wanted to save “John”, we will not create our editing context from the main one.<br />
-We will create what I call a <em>sibling</em> context which share the same store as the main one:</p>
+<p>Then, to prevent “Billy” to be saved while we just wanted to save “John”, we will not create our editing context as a child of the main.<br />
+We will create what we’ll call a <em>sibling</em> context. These are contexts that share the same persitent store coordinator:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">siblingContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
 <span class="n">siblingContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
@@ -318,22 +319,28 @@ We will create what I call a <em>sibling</em> context which share the same store
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>We learned that:</p>
+<p>Here, we learned that:</p>
 
 <ul>
   <li>calling <code>save()</code> on a context will only send changes one step up the hierarchy</li>
   <li><code>save()</code> will commit changes contained in the whole context</li>
 </ul>
 
-<p>As a side note: for the sake of simplicity here, we have only worked with entity insertion.<br />
+<p>I hope that this may help anyone who did not yet grasp how Core Data save its content throught contexts.</p>
+
+<p><strong>As a side note</strong>: for the sake of simplicity here, we have only worked with entity insertion.<br />
 When you start playing with entity attributes, you’ll need to perform some <code>refreshObject()</code> calls to see the saved values in other contexts.</p>
+
 <div class="footnotes">
   <ol>
     <li id="fn:1">
-      <p>Note that you should use <code>performBlock()</code> to execute calls on a <code>NSManagedObjectContext</code> to ensure that the correct thread is using it. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+      <p><code>createPersistentStoreCoordinator</code> and <code>addPersonToContext</code> are helper functions to shorten the code in the article. You can find the code <a href="https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift">here</a> <a href="#fnref:1" class="reversefootnote">&#8617;</a> <a href="#fnref:1:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
     </li>
     <li id="fn:2">
-      <p>as told before<sup id="fnref:1:1"><a href="#fn:1" class="footnote">1</a></sup>, don’t forget to use <code>performBlock()</code> to call CoreData context code <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+      <p>Note that you should use <code>performBlock()</code> to execute calls on a <code>NSManagedObjectContext</code> to ensure that the correct thread is using it. <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>as told before<sup id="fnref:2:1"><a href="#fn:2" class="footnote">2</a></sup>, don’t forget to use <code>performBlock()</code> to call CoreData context code <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>
