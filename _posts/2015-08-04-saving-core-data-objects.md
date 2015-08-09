@@ -8,11 +8,11 @@ The associated playground can be found [in this repo](https://github.com/Liquids
 ## Introduction
 
 I am quite new at using Core Data.
-I have started to use it just a few months back, and I've been using it extensively the last couple of month.
+I have started to use it just a few months back, and I've been using it extensively the last couple of months.
 During this time, I have learned some things about `NSManagedObjectContext` that I want to share.
-Here, I'll be explaining how the saving mechanism works with multiple contexts created using different methods.
+Here, I'll explain how the saving mechanism works with multiple contexts created using different methods.
 
-We'll be working with a very basic Core Data model which will contain only one single entity.
+We'll work with a very basic Core Data model which will contain only one single entity.
 
 	+-----------------+
 	| Person          |
@@ -118,7 +118,7 @@ let mainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyT
 mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
 {% endhighlight %}
-But to spice it a little, let's create another entity that will be living in the main context.
+But to spice it a little, let's create another entity that will exist in the main context.
 For example, this entity could've come from another child context:
 {% highlight swift %}
 let ourOtherPerson = addPersonToContext(mainContext, name: "Billy")
@@ -185,7 +185,7 @@ mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 let ourOtherPerson = addPersonToContext(mainContext, name: "Billy")
 
 {% endhighlight %}
-Then, to prevent "Billy" to be saved while we just wanted to save "John", we will not create our editing context as a child of the main.
+Then, to prevent "Billy" to be saved while we just want to save "John", we will not create our editing context as a child of the main.
 We will create what we'll call a *sibling* context. These are contexts that share the same persitent store coordinator:
 
 {% highlight swift %}
@@ -236,5 +236,5 @@ I hope that this may help anyone who did not yet grasp how Core Data save its co
 
 
 __As a side note__: for the sake of simplicity here, we have only worked with entity insertion.
-When you start playing with entity attributes, you'll need to perform some `refreshObject()` calls to see the saved values in other contexts.
+When you start playing with entity attributes, you'll need to perform some [`refreshObject(_:mergeChanges:)`](https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:) calls to see the saved values in other contexts.
 
