@@ -121,11 +121,11 @@
 <h2 id="introduction">Introduction</h2>
 
 <p>I am quite new at using Core Data.<br />
-I have started to use it just a few months back, and I’ve been using it extensively the last couple of month.<br />
+I have started to use it just a few months back, and I’ve been using it extensively the last couple of months.<br />
 During this time, I have learned some things about <code>NSManagedObjectContext</code> that I want to share.<br />
-Here, I’ll be explaining how the saving mechanism works with multiple contexts created using different methods.</p>
+Here, I’ll explain how the saving mechanism works with multiple contexts created using different methods.</p>
 
-<p>We’ll be working with a very basic Core Data model which will contain only one single entity.</p>
+<p>We’ll work with a very basic Core Data model which will contain only one single entity.</p>
 
 <pre><code>+-----------------+
 | Person          |
@@ -217,7 +217,7 @@ To save it to the persistent store, you’ll need to call <code>save()</code> on
 <span class="k">let</span> <span class="n">mainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
 <span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span></code></pre></div>
 
-<p>But to spice it a little, let’s create another entity that will be living in the main context.<br />
+<p>But to spice it a little, let’s create another entity that will exist in the main context.<br />
 For example, this entity could’ve come from another child context:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">ourOtherPerson</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">mainContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span></code></pre></div>
@@ -274,7 +274,7 @@ For example, this entity could’ve come from another child context:</p>
 <span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
 <span class="k">let</span> <span class="n">ourOtherPerson</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">mainContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span></code></pre></div>
 
-<p>Then, to prevent “Billy” to be saved while we just wanted to save “John”, we will not create our editing context as a child of the main.<br />
+<p>Then, to prevent “Billy” to be saved while we just want to save “John”, we will not create our editing context as a child of the main.<br />
 We will create what we’ll call a <em>sibling</em> context. These are contexts that share the same persitent store coordinator:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">siblingContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
@@ -321,7 +321,7 @@ We will create what we’ll call a <em>sibling</em> context. These are contexts 
 <p>I hope that this may help anyone who did not yet grasp how Core Data save its content throught contexts.</p>
 
 <p><strong>As a side note</strong>: for the sake of simplicity here, we have only worked with entity insertion.<br />
-When you start playing with entity attributes, you’ll need to perform some <code>refreshObject()</code> calls to see the saved values in other contexts.</p>
+When you start playing with entity attributes, you’ll need to perform some <a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:"><code>refreshObject(_:mergeChanges:)</code></a> calls to see the saved values in other contexts.</p>
 
 <div class="footnotes">
   <ol>
