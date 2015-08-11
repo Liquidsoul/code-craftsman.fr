@@ -1,0 +1,18 @@
+<div class="related">
+  <h2>Previous posts</h2>
+  <ul class="related-posts">
+    {% for previous_post in site.posts limit:5 %}
+      {% if previous_post.url != post.url %}
+      <li>
+        <h3>
+          <a href="{{ site.baseurl }}{{ previous_post.url }}">
+            {{ previous_post.title }}
+            <small>{{ previous_post.date | date_to_string }}</small>
+            <p><small>{{previous_post.content | strip_html | truncatewords:25, '…' }}</small></p>
+          </a>
+        </h3>
+      </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
