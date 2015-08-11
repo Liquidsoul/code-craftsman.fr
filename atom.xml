@@ -4,7 +4,7 @@
  <title>Code Craftsman</title>
  <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
  <link href="http://code-craftsman.fr/"/>
- <updated>2015-08-09T19:49:24+02:00</updated>
+ <updated>2015-08-11T22:00:30+02:00</updated>
  <id>http://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
@@ -13,13 +13,95 @@
 
  
  <entry>
+   <title>Testing a Reactive Cocoa App that use CocoaPods</title>
+   <link href="http://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/"/>
+   <updated>2015-08-11T00:00:00+02:00</updated>
+   <id>http://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods</id>
+   <content type="html">&lt;p&gt;Last weekend, I stumbled across something while trying to learn MVVM.&lt;/p&gt;
+
+&lt;p&gt;I was playing with the &lt;a href=&quot;http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1&quot;&gt;Colin Eberhardt’s tutorial&lt;/a&gt; which explains how to set up the pattern using ReactiveCocoa. As I was progressing through the &lt;a href=&quot;http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2&quot;&gt;second part&lt;/a&gt;, I saw this note:&lt;br /&gt;
+&lt;code&gt;If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Because I wanted to be able to set up more tests by using MVVM, I decided that I felt adventurous enough to test the ViewModels without any UI.&lt;/p&gt;
+
+&lt;h2 id=&quot;well-put-their-name-to-the-test&quot;&gt;‘We’ll put their name to the test’&lt;/h2&gt;
+
+&lt;p&gt;So I tried to set up a first basic test:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;testPerformSearch&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;XCTestExpectation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expectation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;expectationWithDescription&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;Search success&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+	&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RWTViewModelServices&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewModelServices&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MockService&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;initWithPushBlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expectation&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fulfill&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;RWTFlickrSearchViewModel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viewModel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RWTFlickrSearchViewModel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;initWithServices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viewModelServices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;viewModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;searchText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;beach&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viewModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;executeSearch&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+	&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;waitForExpectationsWithTimeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;handler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Because I was using some ReactiveCocoa here, it was necessary to import the ReactiveCocoa header to make this work. To do this, I just applied the same pod configuration to my test target:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;public/images/RAC_Issue/TestConfigurationFile.png&quot; alt=&quot;Test configuration file&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once my test compiled, I was quite confident that it would pass. However, here is what I got:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;nl&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ReactiveCocoaTestIssueTests&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;testExecute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;caught&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;NSInternalInconsistencyException&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;-and must only be used on a signal of RACTuples of NSNumbers. Instead, received: &amp;lt;RACTuple: 0x7fdd8bd40af0&amp;gt; (&lt;/span&gt;
+    &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This was weird… a &lt;code&gt;RACTuple&lt;/code&gt; that is not a &lt;code&gt;RACTuple&lt;/code&gt;…&lt;/p&gt;
+
+&lt;p&gt;After some time digging, I found &lt;a href=&quot;https://github.com/ReactiveCocoa/ReactiveCocoa/issues/901&quot;&gt;this isssue&lt;/a&gt; in ReactiveCocoa github.&lt;/p&gt;
+
+&lt;p&gt;One explaination might be that we have more than only one &lt;code&gt;RACTuple&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.&lt;br /&gt;
+By default, tests are run against the Host Application (see your Project &amp;gt; Targets &amp;gt; General)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;public/images/RAC_Issue/TestingDefaultSetup.jpg&quot; alt=&quot;Testing target image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;and linking the test target to ReactiveCocoa &lt;em&gt;doubles&lt;/em&gt; the symbols because Xcode perform some dynamic code injection behind the scene.&lt;/p&gt;
+
+&lt;h2 id=&quot;getting-out-of-the-pit&quot;&gt;Getting out of the pit&lt;/h2&gt;
+
+&lt;p&gt;There are multiple solutions to this, but, unfortunately, nothing straightforward which use CocoaPods. As I discovered, I am not the first one to stumble upon &lt;a href=&quot;https://github.com/CocoaPods/CocoaPods/issues/1411&quot;&gt;this&lt;/a&gt; and the feature is still &lt;a href=&quot;https://github.com/CocoaPods/CocoaPods/issues/840&quot;&gt;missing&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So what can one do ?&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;One solution is to change your testing settings and stop testing against the Application. In this case, you need to compile all the code you want to test in your test target. This can be quite cumbersome because every time you add a class in your App, you may need to add it to your test target. Another problem is that you run your tests outside the context of your running App, this can be problematic in some cases.&lt;/li&gt;
+  &lt;li&gt;Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: &lt;code&gt;$(PROJECT_DIR)/Pods/Headers&lt;/code&gt;. This is kind of dirty, but that do the trick.&lt;/li&gt;
+  &lt;li&gt;Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won’t relying of some generated settings on your project.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Maybe there are other solutions but, for now, I have just used the second one for my problem.&lt;/p&gt;
+
+&lt;p&gt;If you want to see an example of the problem, I shared &lt;a href=&quot;https://github.com/Liquidsoul/ReactiveCocoaTestIssue&quot;&gt;a project on github&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I hope this will help someone!&lt;/p&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;injecting third-party libraries like if it was nothing &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Saving CoreData objects</title>
    <link href="http://code-craftsman.fr/2015/08/04/saving-core-data-objects/"/>
    <updated>2015-08-04T00:00:00+02:00</updated>
    <id>http://code-craftsman.fr/2015/08/04/saving-core-data-objects</id>
    <content type="html">&lt;p&gt;The associated playground can be found &lt;a href=&quot;https://github.com/Liquidsoul/coredata-saving-contexts&quot;&gt;in this repo&lt;/a&gt;!&lt;/p&gt;
 
-&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+&lt;h2 id=&quot;the-context&quot;&gt;The context&lt;/h2&gt;
 
 &lt;p&gt;I am quite new at using Core Data.&lt;br /&gt;
 I have started to use it just a few months back, and I’ve been using it extensively the last couple of months.&lt;br /&gt;
@@ -35,9 +117,12 @@ Here, I’ll explain how the saving mechanism works with multiple contexts creat
 +-----------------+
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Here is our context:&lt;br /&gt;
- * we’ve got a main context that is used by our controllers&lt;br /&gt;
- * we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)&lt;/p&gt;
+&lt;p&gt;Here is our context:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;we’ve got a main context that is used by our controllers&lt;/li&gt;
+  &lt;li&gt;we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;the-first-approach&quot;&gt;The first approach&lt;/h2&gt;
 &lt;p&gt;To get started quickly with our topic, the heavy lifting of creating the model and persistent store coordinator will be done behind the scene&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;

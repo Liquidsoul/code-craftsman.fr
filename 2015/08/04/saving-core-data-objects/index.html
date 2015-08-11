@@ -118,7 +118,7 @@
   <span class="post-date">04 Aug 2015</span>
   <p>The associated playground can be found <a href="https://github.com/Liquidsoul/coredata-saving-contexts">in this repo</a>!</p>
 
-<h2 id="introduction">Introduction</h2>
+<h2 id="the-context">The context</h2>
 
 <p>I am quite new at using Core Data.<br />
 I have started to use it just a few months back, and I’ve been using it extensively the last couple of months.<br />
@@ -134,9 +134,12 @@ Here, I’ll explain how the saving mechanism works with multiple contexts creat
 +-----------------+
 </code></pre>
 
-<p>Here is our context:<br />
- * we’ve got a main context that is used by our controllers<br />
- * we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)</p>
+<p>Here is our context:</p>
+
+<ul>
+  <li>we’ve got a main context that is used by our controllers</li>
+  <li>we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)</li>
+</ul>
 
 <h2 id="the-first-approach">The first approach</h2>
 <p>To get started quickly with our topic, the heavy lifting of creating the model and persistent store coordinator will be done behind the scene<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>:</p>
@@ -340,20 +343,51 @@ When you start playing with entity attributes, you’ll need to perform some <a 
 </div>
 
 <div class="related">
-  <h2>Related Posts</h2>
+  <h2>Previous posts</h2>
   <ul class="related-posts">
     
+      
+      <li>
+        <h3>
+          <a href="/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/">
+            Testing a Reactive Cocoa App that use CocoaPods
+            <small>11 Aug 2015</small>
+            <p><small>Last weekend, I stumbled across something while trying to learn MVVM. I was playing with the [Colin Eberhardt's tutorial](http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1) which explains how to set up…</small></p>
+          </a>
+        </h3>
+      </li>
+      
+    
+      
+      <li>
+        <h3>
+          <a href="/2015/08/04/saving-core-data-objects/">
+            Saving CoreData objects
+            <small>04 Aug 2015</small>
+            <p><small>The associated playground can be found in this repo! The context I am quite new at using Core Data. I have started to use it…</small></p>
+          </a>
+        </h3>
+      </li>
+      
+    
+      
       <li>
         <h3>
           <a href="/2015/07/30/my-very-first-post/">
             My very first post
             <small>30 Jul 2015</small>
+            <p><small>Hi!
+
+This is my first blog post ever and, hopefully, it will be the first of many to come.
+</small></p>
           </a>
         </h3>
       </li>
+      
     
   </ul>
 </div>
+
 
       </div>
     </div>
