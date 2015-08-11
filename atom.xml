@@ -4,7 +4,7 @@
  <title>Code Craftsman</title>
  <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
  <link href="http://code-craftsman.fr/"/>
- <updated>2015-08-11T22:05:16+02:00</updated>
+ <updated>2015-08-11T22:12:03+02:00</updated>
  <id>http://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
@@ -45,7 +45,7 @@
 
 &lt;p&gt;Because I was using some ReactiveCocoa here, it was necessary to import the ReactiveCocoa header to make this work. To do this, I just applied the same pod configuration to my test target:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;public/images/RAC_Issue/TestConfigurationFile.png&quot; alt=&quot;Test configuration file&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/public/images/RAC_Issue/TestConfigurationFile.png&quot; alt=&quot;Test configuration file&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Once my test compiled, I was quite confident that it would pass. However, here is what I got:&lt;/p&gt;
 
@@ -63,7 +63,7 @@
 &lt;p&gt;It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.&lt;br /&gt;
 By default, tests are run against the Host Application (see your Project &amp;gt; Targets &amp;gt; General)&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;public/images/RAC_Issue/TestingDefaultSetup.jpg&quot; alt=&quot;Testing target image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/public/images/RAC_Issue/TestingDefaultSetup.jpg&quot; alt=&quot;Testing target image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;and linking the test target to ReactiveCocoa &lt;em&gt;doubles&lt;/em&gt; the symbols because Xcode perform some dynamic code injection behind the scene.&lt;/p&gt;
 
