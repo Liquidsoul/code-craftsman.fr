@@ -19,7 +19,7 @@ description:         'This is my personal blog where I talk about software.'
 domain_name:         code-craftsman.fr
 url:                 http://code-craftsman.fr
 baseurl:             ''
-paginate:            5
+paginate:            1
 
 # About/contact
 author:
