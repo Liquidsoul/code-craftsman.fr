@@ -33,7 +33,7 @@ So I tried to set up a first basic test:
 
 Because I was using some ReactiveCocoa here, it was necessary to import the ReactiveCocoa header to make this work. To do this, I just applied the same pod configuration to my test target:
 
-![Test configuration file](public/images/RAC_Issue/TestConfigurationFile.png)
+![Test configuration file](/public/images/RAC_Issue/TestConfigurationFile.png)
 
 Once my test compiled, I was quite confident that it would pass. However, here is what I got:
 
@@ -53,7 +53,7 @@ One explaination might be that we have more than only one `RACTuple` class.
 It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.
 By default, tests are run against the Host Application (see your Project > Targets > General)
 
-![Testing target image](public/images/RAC_Issue/TestingDefaultSetup.jpg)
+![Testing target image](/public/images/RAC_Issue/TestingDefaultSetup.jpg)
 
 and linking the test target to ReactiveCocoa *doubles* the symbols because Xcode perform some dynamic code injection behind the scene.
 
