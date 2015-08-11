@@ -4,7 +4,7 @@
  <title>Code Craftsman</title>
  <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
  <link href="http://code-craftsman.fr/"/>
- <updated>2015-08-11T22:12:03+02:00</updated>
+ <updated>2015-08-11T22:20:11+02:00</updated>
  <id>http://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
@@ -13,7 +13,7 @@
 
  
  <entry>
-   <title>Testing a Reactive Cocoa App that use CocoaPods</title>
+   <title>Testing a Reactive Cocoa App that uses CocoaPods</title>
    <link href="http://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/"/>
    <updated>2015-08-11T00:00:00+02:00</updated>
    <id>http://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods</id>
