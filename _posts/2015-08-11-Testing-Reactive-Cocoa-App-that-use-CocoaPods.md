@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Testing a Reactive Cocoa App that use CocoaPods
+title: Testing a Reactive Cocoa App that uses CocoaPods
 ---
 
 Last weekend, I stumbled across something while trying to learn MVVM.
