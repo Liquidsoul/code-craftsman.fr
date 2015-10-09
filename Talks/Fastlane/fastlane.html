@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fastlane</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-slide-number {
+        /*visibility: hidden;*/
+      }
+      .footnote {
+        position: absolute;
+        bottom: 1em;
+        left: 1em;
+        right: 1em;
+      }
+
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+
+      #slide-tool .pull-left {
+        float:left;
+        width: 35%;
+      }
+
+      #slide-tool .pull-right {
+        float: right;
+        width: 65%;
+      }
+
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+      .left-column h2:last-of-type, .left-column h3:last-child {
+        color: #000;
+      }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: center, middle
+
+# ![Fastlane](fastlane_medium_white.png "Fastlane")
+
+---
+
+# What is Fastlane?
+
+???
+
+Fastlane is 2 things behind one name
+
+--
+
+* a set of open-source command-line tools for iOS/Mac to automate delivery
+
+--
+
+* a tool to connect all deployment tools into one streamlined workflow
+
+---
+
+# Why use Fastlane?
+
+--
+
+* Automatic deployment
+
+--
+
+  * prevent wasting time with manual steps for every release you make, so you can release **quickly** and **easily**
+
+--
+
+  * release and deliver features **often** to your users!
+
+--
+
+* Storing as much information as possible on the file system
+
+--
+
+  * more information in **source control**
+
+???
+
+1. backup your deployment scripts
+2. store their evolution
+
+--
+
+  * make every step of your release workflow **explict**
+
+--
+
+* Allowing every developer to be able to deliver your products
+
+???
+
+* All developers
+  * even a new member in your team should be able to deliver your software without making mistakes that can only be taught by experiencing them
+
+--
+
+  * no more written (or _worse_ oral) deliver checklist
+
+---
+
+class: center, middle
+
+## Fastlane tools overview
+
+---
+name:tool
+
+.pull-left[
+![:fixed_height 120px](deliver.png)
+
+* App Metadata
+
+* Screenshots
+
+* IPA
+
+* TestFlight
+
+* App Submission
+]
+
+--
+name:tool
+
+.pull-right[
+`DeliverFile`
+
+```Ruby
+config_json_folder "./deliver"
+screenshots_path "./screenshots"
+
+title({
+  "en-US" => "Your App Name"
+})
+
+changelog({
+  "en-US" => "iOS 9 Support"
+})
+
+copyright "#{Time.now.year} Your Company"
+
+automatic_release false
+
+ipa do
+  system("cd ..; ipa build")
+  "../fastlane.ipa"
+end
+
+success do
+  system("say 'Successfully submitted version.'")
+end
+```
+]
+
+???
+
+* configuration file for `deliver`
+* ruby -> dynamic copyright line
+
+---
+name:tool
+
+.pull-left[
+![:fixed_height 120px](snapshot.png)
+
+* UI Automation (UI Testing coming)
+
+* All combinations of screenshots
+
+* Generate a HTML summary
+]
+
+???
+
+* Generate screenshots for app submission in all languages. 10 languages => 250 screenshots
+* Allow to show how your app behaves with different screen sizes without running it manually.
+
+--
+
+.pull-right[
+![:scale 120%](snapshotPreviewFade.jpg)
+]
+
+???
+
+* Summary example
+
+---
+
+![:fixed_height 120px](snapshot.png)
+
+  ![:scale 100%](snapshot.gif)
+
+???
+
+Here is an example of snapshot doing its work.
+
+---
+name:tool
+
+.pull-left[
+![:fixed_height 120px](frameit.png)
+
+* reframe your screenshots with custom borders
+
+* add custom text
+]
+
+???
+
+* frameit: reframe your screenshots using device frames or custom background and text
+* Nice addition to snapshot to customize your screenshots automatically.
+
+--
+name:tool
+
+.pull-right[
+![:scale 115%](frameit-example.png)
+]
+
+---
+
+.pull-left[
+![:fixed_height 120px](sigh.png)
+
+* create, renew download and repair provisioning profiles
+
+* update adhoc provisioning with all registered devices
+]
+
+???
+
+* sigh: create, renew, download and repair provisioning profiles. One nice feature is auto-adding all test devices in an Ad Hoc profile.
+
+--
+
+.pull-right[
+![:fixed_height 120px](cert.png)
+
+* create an maintain iOS code signing certificates
+]
+
+---
+
+.pull-left[
+![:fixed_height 120px](pem.png)
+
+* generate and renew push notification profiles
+]
+
+--
+
+.pull-right[
+![:fixed_height 120px](codes.png)
+
+* create promo codes for iOS Apps
+]
+
+---
+
+.pull-left[
+![:fixed_height 120px](produce.png)
+
+* create new iOS apps on iTunes Connect and Dev Portal
+]
+
+--
+
+.pull-right[
+![:fixed_height 120px](gym.png)
+
+* build and sign your application
+]
+
+???
+
+replacement for shenzhen
+
+---
+
+.pull-left[
+![:fixed_height 120px](pilot.png)
+
+* Manage TestFlight testers and builds
+]
+
+???
+
+* upload builds
+* list builds
+* list/add/remove testers
+
+--
+
+.pull-right[
+![:fixed_height 120px](boarding.png)
+
+* create a simple signup page for TestFlight beta testers using Heroku
+]
+
+---
+class: center
+
+![:fixed_height 120px](spaceship.png)
+
+A Ruby library that exposes both the Apple Developer Center and the iTunes Connect API.
+
+---
+
+class: center
+
+![:fixed_height 120px](spaceship.png)
+
+Comes with a new nice playground feature
+
+![](spaceship.gif)
+
+---
+
+class: center, middle
+
+![:scale 50%](fastlane_medium_white.png)
+
+--
+
+class: center, middle
+
+![:scale 50%](diagram.png)
+
+---
+
+## Fastfile examples
+
+--
+
+Launch project tests
+
+.pull-left[
+`Fastfile`
+```ruby
+lane :tests do |options|
+  cocoapods   # run pod install
+  xctest      # run xcode tests
+end
+```
+]
+
+--
+
+.pull-right[
+`Command`
+```bash
+fastlane tests
+```
+]
+
+---
+
+## Fastfile examples
+
+Deploy beta build and increment build number
+
+.pull-left[
+`Fastfile`
+```ruby
+lane :beta do |options|
+  sigh      # provisioning update
+  gym       # generate ipa 
+  hockey    # upload ipa to HockeyApp
+  pilot     # upload ipa to TestFlight
+
+  increment_build_number
+  commit_version_bump
+end
+```
+]
+
+--
+
+.pull-right[
+`Command`
+```bash
+fastlane beta
+```
+]
+
+---
+
+## Some Fastlane actions
+
+.pull-left[
+* `add_git_tag`
+* `appstore`
+* `artifactory`
+* `carthage`
+* `cocoapods`
+* `crashlytics`
+* `dsym_zip`
+* `ensure_git_branch`
+* `ensure_git_status_clean`
+* `ensure_no_debug_code`
+* `hockey`
+* `import_from_git`
+* `slack`
+* `verify_xcode`
+]
+
+--
+
+.pull-right[
+List all actions:
+
+```bash
+fastlane actions
+```
+]
+
+--
+
+.pull-right[
+Action usage:
+
+```bash
+fastlane action import_from_git
+```
+]
+
+
+???
+
+* `add_git_tag`
+* `appstore`                     | Upload new metadata to iTunes Connect and optionally a new binary
+* `artifactory`                  | This action uploads an artifact to artifactory
+* `carthage`                     | Runs `carthage bootstrap` for your project
+* `cocoapods`                    | Runs `pod install` for the project
+* `crashlytics`                  | Upload a new build to Crashlytics Beta
+* `dsym_zip`                     | Creates a zipped dSYM in the project root from the .xcarchive
+* `ensure_git_branch`            | Raises an exception if not on a specific git branch
+* `ensure_git_status_clean`      | Raises an exception if there are uncommited git changes
+* `ensure_no_debug_code`         | Ensures the given text is nowhere in the code base
+* `hockey`                       | Upload a new build to HockeyApp
+* `import_from_git`              | Import another Fastfile from a remote git repository to use its lanes
+* `slack`                        | Send a success/error message to your Slack group
+* `verify_xcode`                 | Verifies that the Xcode installation is properly signed by Apple
+
+---
+
+## Documentation example
+
+![](import_from_git_help.png)
+
+---
+
+## How we use it @Viadeo?
+
+* 3 distinct Apps
+* 4 projects
+* 1 shared `Fastfile`
+  * `import_from_git` to import it from a shared repository
+  * `.env` file on each repo for specific app setup through environment variables
+
+---
+
+## Our `Fastfile`
+
+* 1 CI lane to run tests
+
+
+* 1 deployment lane
+  * create beta build with some debug controls
+  * upload beta build on HockeyApp
+  * create release build for AppStore
+  * upload release build to TestFlight
+  * increment build number
+  * add git tag
+  * push to github
+
+
+* version bumping lanes
+
+```bash
+fastlane bump_patch
+```
+
+`1.0.0 => 1.0.1`
+
+---
+
+class: center, middle
+
+# ![Fastlane](fastlane_medium_white.png "Fastlane")
+
+https://fastlane.tools
+
+Maintainer: [@KrauseFx](https://twitter.com/KrauseFx) (Felix Krause)
+
+???
+
+* tool created by Felix Krause
+
+--
+
+.footnote[
+Sébastien Duperron - [@liquidseb](https://twitter.com/liquidseb)  
+Viadeo
+]
+
+---
+
+class: center, middle
+
+# Q&A
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      remark.macros.scale = function (percentage) {
+        var url = this;
+        return '<img src="' + url + '" style="width: ' + percentage + '; height: ' + percentage + '" />';
+      };
+
+      remark.macros.fixed_height = function (height) {
+        var url = this;
+        return '<img src="' + url + '" style="height: ' + height + '" />';
+      }
+
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
