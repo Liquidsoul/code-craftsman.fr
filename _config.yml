@@ -1,4 +1,4 @@
-exclude:			[generateSiteOnBranch.sh]
+exclude:			[setup.sh, bin, Gemfile, Gemfile.lock]
 
 # Dependencies
 markdown:            kramdown

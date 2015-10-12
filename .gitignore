@@ -43,4 +43,6 @@ bower_components
 
 # Bundler
 Gemfile.lock
+.bundle
+.bin
 
