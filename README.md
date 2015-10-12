@@ -19,9 +19,24 @@ To build the site into the `_site` folder use:
 
     $ bundle exec jekyll build
 
+or
+
+    $ bundle exec fastlane build
+
 ### Serve
 
 To serve the site run:
 
     $ bundle exec jekyll serve
 
+or
+
+    $ bundle exec fastlane serve
+
+Note that in this case, you'll have to manually kill the jekyll instance. See the output for details. 
+
+### Deploy
+
+To deploy the site into its dedicated branch run:
+
+    $ bundle exec fastlane deploy

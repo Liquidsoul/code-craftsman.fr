@@ -1,0 +1,85 @@
+source_branch_name = 'source'
+target_branch_name = 'gh-pages'
+site_folder = '../_site'
+
+fastlane_version "1.32.1"
+
+before_all do
+end
+
+desc "Build the site in _site folder"
+lane :build do
+  sh "cd .. && bundle exec jekyll build"
+end
+
+desc "Remove the _site folder"
+lane :clean do |options|
+  if Dir.exists?(site_folder)
+    require 'fileutils'
+    FileUtils.rm_rf site_folder
+  end
+end
+
+desc "Deploy the site on the branch #{target_branch_name}"
+lane :deploy do
+  ensure_git_branch(branch:source_branch_name)
+
+  commits_to_integrate = integration_status
+
+  if commits_to_integrate.length == 0
+    raise "Nothing to integrate from branch '#{source_branch_name}'"
+  end
+
+  clean
+
+  create_local_clone
+
+  build
+
+  push_local_clone commits:commits_to_integrate
+end
+
+private_lane :integration_status do |options|
+  last_commit_date = sh "git log -1 --format=%cd #{target_branch_name}"
+  sh "git log --since='#{last_commit_date}' --format=%s #{source_branch_name}"
+end
+
+private_lane :create_local_clone do |options|
+  cmd = []
+  cmd << "git clone --recursive .. #{site_folder}"
+  cmd << "cd #{site_folder}"
+  cmd << "git checkout #{target_branch_name}"
+  # empty repository except for hidden files (like .gitignore)
+  cmd << "ls | xargs git rm -r"
+
+  sh cmd.join(' && ')
+end
+
+private_lane :push_local_clone do |options|
+  commit_message = "Site update\n\n#{options[:commits]}"
+
+  cmd = []
+  cmd << "cd #{site_folder}"
+  cmd << "git add ."
+  cmd << "git commit -m \"#{commit_message}\""
+  cmd << "git push"
+
+  sh cmd.join(' && ')
+end
+
+lane :debug do |options|
+#   commits_to_integrate = integration_status
+
+#   push_local_clone commits:commits_to_integrate
+end
+
+desc "Launch a local server for the blog"
+lane :serve do |options|
+  sh "cd .. && bundle exec jekyll serve --watch --drafts --detach"
+end
+
+after_all do |lane|
+end
+
+error do |lane, exception|
+end

@@ -46,3 +46,6 @@ Gemfile.lock
 .bundle
 .bin
 
+# Fastlane
+fastlane/report.xml
+
