@@ -67,12 +67,6 @@ private_lane :push_local_clone do |options|
   sh cmd.join(' && ')
 end
 
-lane :debug do |options|
-#   commits_to_integrate = integration_status
-
-#   push_local_clone commits:commits_to_integrate
-end
-
 desc "Launch a local server for the blog"
 lane :serve do |options|
   sh "cd .. && bundle exec jekyll serve --watch --drafts --detach"
