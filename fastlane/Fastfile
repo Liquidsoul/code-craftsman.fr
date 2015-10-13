@@ -9,7 +9,7 @@ end
 
 desc "Build the site in _site folder"
 lane :build do
-  sh "cd .. && bundle exec jekyll build"
+  jekyll
 end
 
 desc "Remove the _site folder"
