@@ -61,7 +61,7 @@ private_lane :push_local_clone do |options|
   cmd = []
   cmd << "cd #{site_folder}"
   cmd << "git add ."
-  cmd << "git commit -m \"#{commit_message}\""
+  cmd << "git commit -m \'#{commit_message}\'"
   cmd << "git push"
 
   sh cmd.join(' && ')
