@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Swift, TDD and Playground
+title: Swift, TDD and Playgrounds
 ---
 
 Lately, I have been doing some TDD in Swift.
@@ -16,7 +16,7 @@ So I have looked into how I could do TDD using a Playground with the following o
 
 `The final code must be easily moved into a classic Xcode project.`
 
-## XCTest in Playground
+## XCTest in Playgrounds
 
 When we do unit tests in Xcode, we use the `XCTest` framework.
 It gives us the `XCTestCase` class to run our tests and `XCTAssert` methods to check the results.
