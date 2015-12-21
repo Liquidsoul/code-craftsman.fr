@@ -134,17 +134,18 @@
 
 <p>I am quite new at using Core Data.<br />
 I have started to use it just a few months back, and I’ve been using it extensively the last couple of months.<br />
-During this time, I have learned some things about <code>NSManagedObjectContext</code> that I want to share.<br />
+During this time, I have learned some things about <code class="highlighter-rouge">NSManagedObjectContext</code> that I want to share.<br />
 Here, I’ll explain how the saving mechanism works with multiple contexts created using different methods.</p>
 
 <p>We’ll work with a very basic Core Data model which will contain only one single entity.</p>
 
-<pre><code>+-----------------+
+<div class="highlighter-rouge"><pre class="highlight"><code>+-----------------+
 | Person          |
 +-----------------+
 | name            |
 +-----------------+
 </code></pre>
+</div>
 
 <p>Here is our context:</p>
 
@@ -205,14 +206,15 @@ Here, I’ll explain how the saving mechanism works with multiple contexts creat
 <p>Wait, what? There is no data? What happened?</p>
 
 <p>Here is the first important lesson to learn.<br />
-Let’s have a look at the official documentation of <code>save()</code>:</p>
+Let’s have a look at the official documentation of <code class="highlighter-rouge">save()</code>:</p>
 
-<pre><code>Attempts to commit unsaved changes to registered objects to the receiver’s
+<div class="highlighter-rouge"><pre class="highlight"><code>Attempts to commit unsaved changes to registered objects to the receiver’s
 parent store.
 </code></pre>
+</div>
 
-<p>This can be misleading. When one see <code>parent store</code> he can understand <code>the parent persitent store of my context hierarchy</code>.<br />
-However, what is meant by <code>parent store</code> is either:</p>
+<p>This can be misleading. When one see <code class="highlighter-rouge">parent store</code> he can understand <code class="highlighter-rouge">the parent persitent store of my context hierarchy</code>.<br />
+However, what is meant by <code class="highlighter-rouge">parent store</code> is either:</p>
 
 <ul>
   <li>the persistentStoreCoordinator</li>
@@ -220,7 +222,7 @@ However, what is meant by <code>parent store</code> is either:</p>
 </ul>
 
 <p>So, if your context was setup with a parent context, changes are commited to his parent but no further.<br />
-To save it to the persistent store, you’ll need to call <code>save()</code> on contexts all the way up in the hierarchy until you reach the persistent store.</p>
+To save it to the persistent store, you’ll need to call <code class="highlighter-rouge">save()</code> on contexts all the way up in the hierarchy until you reach the persistent store.</p>
 
 <h2 id="fixing-our-first-approach">Fixing our first approach</h2>
 
@@ -274,7 +276,7 @@ For example, this entity could’ve come from another child context:</p>
 
 <p>Oh no! We’ve saved “Billy” as well!</p>
 
-<p>Yet, this seems coherent with the fact that, as we’ve performed a <code>save()</code> on the main context, <em>all</em> objects it contains are saved.</p>
+<p>Yet, this seems coherent with the fact that, as we’ve performed a <code class="highlighter-rouge">save()</code> on the main context, <em>all</em> objects it contains are saved.</p>
 
 <p>So what can we do if we only want to save John without saving Billy?</p>
 
@@ -329,25 +331,25 @@ We will create what we’ll call a <em>sibling</em> context. These are contexts 
 <p>Here, we learned that:</p>
 
 <ul>
-  <li>calling <code>save()</code> on a context will only send changes one step up the hierarchy</li>
-  <li><code>save()</code> will commit changes contained in the whole context</li>
+  <li>calling <code class="highlighter-rouge">save()</code> on a context will only send changes one step up the hierarchy</li>
+  <li><code class="highlighter-rouge">save()</code> will commit changes contained in the whole context</li>
 </ul>
 
 <p>I hope that this may help anyone who did not yet grasp how Core Data save its content throught contexts.</p>
 
 <p><strong>As a side note</strong>: for the sake of simplicity here, we have only worked with entity insertion.<br />
-When you start playing with entity attributes, you’ll need to perform some <a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:"><code>refreshObject(_:mergeChanges:)</code></a> calls to see the saved values in other contexts.</p>
+When you start playing with entity attributes, you’ll need to perform some <a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:"><code class="highlighter-rouge">refreshObject(_:mergeChanges:)</code></a> calls to see the saved values in other contexts.</p>
 
 <div class="footnotes">
   <ol>
     <li id="fn:1">
-      <p><code>createPersistentStoreCoordinator</code> and <code>addPersonToContext</code> are helper functions to shorten the code in the article. You can find the code <a href="https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift">here</a> <a href="#fnref:1" class="reversefootnote">&#8617;</a> <a href="#fnref:1:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+      <p><code class="highlighter-rouge">createPersistentStoreCoordinator</code> and <code class="highlighter-rouge">addPersonToContext</code> are helper functions to shorten the code in the article. You can find the code <a href="https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift">here</a> <a href="#fnref:1" class="reversefootnote">&#8617;</a> <a href="#fnref:1:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
     </li>
     <li id="fn:2">
-      <p>Note that you should use <code>performBlock()</code> to execute calls on a <code>NSManagedObjectContext</code> to ensure that the correct thread is using it. <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+      <p>Note that you should use <code class="highlighter-rouge">performBlock()</code> to execute calls on a <code class="highlighter-rouge">NSManagedObjectContext</code> to ensure that the correct thread is using it. <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
     </li>
     <li id="fn:3">
-      <p>as told before<sup id="fnref:2:1"><a href="#fn:2" class="footnote">2</a></sup>, don’t forget to use <code>performBlock()</code> to call CoreData context code <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+      <p>as told before<sup id="fnref:2:1"><a href="#fn:2" class="footnote">2</a></sup>, don’t forget to use <code class="highlighter-rouge">performBlock()</code> to call CoreData context code <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>
@@ -362,8 +364,8 @@ When you start playing with entity attributes, you’ll need to perform some <a 
       
       <li>
         <h3>
-          <a href="/2015/12/21/Swift_TDD_and_Playground/">
-            Swift, TDD and Playground
+          <a href="/2015/12/21/Swift_TDD_and_Playgrounds/">
+            Swift, TDD and Playgrounds
             <small>21 Dec 2015</small>
             <p><small>Lately, I have been doing some TDD in Swift. While following the `red, green, refactor` cycle using the default Xcode test target, I found that…</small></p>
           </a>

@@ -4,7 +4,7 @@
  <title>Code Craftsman</title>
  <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
  <link href="http://code-craftsman.fr/"/>
- <updated>2015-12-21T22:42:24+01:00</updated>
+ <updated>2015-12-21T22:55:34+01:00</updated>
  <id>http://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
@@ -13,13 +13,13 @@
 
  
  <entry>
-   <title>Swift, TDD and Playground</title>
-   <link href="http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playground/"/>
+   <title>Swift, TDD and Playgrounds</title>
+   <link href="http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playgrounds/"/>
    <updated>2015-12-21T00:00:00+01:00</updated>
-   <id>http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playground</id>
+   <id>http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playgrounds</id>
    <content type="html">&lt;p&gt;Lately, I have been doing some TDD in Swift.&lt;/p&gt;
 
-&lt;p&gt;While following the &lt;code&gt;red, green, refactor&lt;/code&gt; cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.&lt;br /&gt;
+&lt;p&gt;While following the &lt;code class=&quot;highlighter-rouge&quot;&gt;red, green, refactor&lt;/code&gt; cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.&lt;br /&gt;
 So, I asked myself if there was not a faster way of doing this in Swift.&lt;/p&gt;
 
 &lt;p&gt;And the answer came quite easily. What do we use when we want to test something quickly in Swift?&lt;/p&gt;
@@ -28,23 +28,23 @@ So, I asked myself if there was not a faster way of doing this in Swift.&lt;/p&g
 
 &lt;p&gt;So I have looked into how I could do TDD using a Playground with the following objective in mind:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;The final code must be easily moved into a classic Xcode project.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;The final code must be easily moved into a classic Xcode project.&lt;/code&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;xctest-in-playground&quot;&gt;XCTest in Playground&lt;/h2&gt;
+&lt;h2 id=&quot;xctest-in-playgrounds&quot;&gt;XCTest in Playgrounds&lt;/h2&gt;
 
-&lt;p&gt;When we do unit tests in Xcode, we use the &lt;code&gt;XCTest&lt;/code&gt; framework.&lt;br /&gt;
-It gives us the &lt;code&gt;XCTestCase&lt;/code&gt; class to run our tests and &lt;code&gt;XCTAssert&lt;/code&gt; methods to check the results.&lt;br /&gt;
+&lt;p&gt;When we do unit tests in Xcode, we use the &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTest&lt;/code&gt; framework.&lt;br /&gt;
+It gives us the &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTestCase&lt;/code&gt; class to run our tests and &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTAssert&lt;/code&gt; methods to check the results.&lt;br /&gt;
 The class is not necessary in our case because we can call the functions direclty to run the tests. But, the methods are.&lt;/p&gt;
 
-&lt;p&gt;Yet, when you try to import &lt;code&gt;XCTest&lt;/code&gt; in your iOS playground you will have this:&lt;/p&gt;
+&lt;p&gt;Yet, when you try to import &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTest&lt;/code&gt; in your iOS playground you will have this:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;error: cannot load underlying module for &#39;XCTest&#39;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;error: cannot load underlying module for &#39;XCTest&#39;&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;In order to use &lt;code&gt;XCTest&lt;/code&gt; directly, you have to use an OSX playground.&lt;/p&gt;
+&lt;p&gt;In order to use &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTest&lt;/code&gt; directly, you have to use an OSX playground.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/public/images/XCTestPlayground/OSX_Playground.png&quot; alt=&quot;OSX Playground&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Once done, using a method like &lt;code&gt;XCTFail&lt;/code&gt; will show you when there is a problem.&lt;/p&gt;
+&lt;p&gt;Once done, using a method like &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTFail&lt;/code&gt; will show you when there is a problem.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/public/images/XCTestPlayground/XCTest_exception.png&quot; alt=&quot;XCTFail error&quot; /&gt;&lt;/p&gt;
 
@@ -52,7 +52,7 @@ The class is not necessary in our case because we can call the functions direclt
 
 &lt;h2 id=&quot;the-xctestplayground-workaround&quot;&gt;The XCTestPlayground workaround&lt;/h2&gt;
 
-&lt;p&gt;To address these issues, I had the idea to implement my own &lt;code&gt;XCT&lt;/code&gt; methods using a nice feature of Playgrounds: &lt;code&gt;the display of the return value&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To address these issues, I had the idea to implement my own &lt;code class=&quot;highlighter-rouge&quot;&gt;XCT&lt;/code&gt; methods using a nice feature of Playgrounds: &lt;code class=&quot;highlighter-rouge&quot;&gt;the display of the return value&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;Here is the result:&lt;/p&gt;
 
@@ -60,9 +60,9 @@ The class is not necessary in our case because we can call the functions direclt
 
 &lt;p&gt;With that, you can write test code in a Playground and have direct feedback on which assert passes and which does not.&lt;/p&gt;
 
-&lt;p&gt;You can find my implementation of the asserts in &lt;a href=&quot;https://github.com/Liquidsoul/XCTestPlayground&quot;&gt;this repository&lt;/a&gt;. If you want to use this, just add the &lt;code&gt;XCTestPlayground.swift&lt;/code&gt; file to your Playground’s sources folder.&lt;/p&gt;
+&lt;p&gt;You can find my implementation of the asserts in &lt;a href=&quot;https://github.com/Liquidsoul/XCTestPlayground&quot;&gt;this repository&lt;/a&gt;. If you want to use this, just add the &lt;code class=&quot;highlighter-rouge&quot;&gt;XCTestPlayground.swift&lt;/code&gt; file to your Playground’s sources folder.&lt;/p&gt;
 
-&lt;p&gt;Note that I did not implement all the functions. For example, the &lt;code&gt;WithAccuracy&lt;/code&gt; ones are missing.&lt;/p&gt;
+&lt;p&gt;Note that I did not implement all the functions. For example, the &lt;code class=&quot;highlighter-rouge&quot;&gt;WithAccuracy&lt;/code&gt; ones are missing.&lt;/p&gt;
 </content>
  </entry>
  
@@ -74,7 +74,7 @@ The class is not necessary in our case because we can call the functions direclt
    <content type="html">&lt;p&gt;Last weekend, I stumbled across something while trying to learn MVVM.&lt;/p&gt;
 
 &lt;p&gt;I was playing with the &lt;a href=&quot;http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1&quot;&gt;Colin Eberhardt’s tutorial&lt;/a&gt; which explains how to set up the pattern using ReactiveCocoa. As I was progressing through the &lt;a href=&quot;http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2&quot;&gt;second part&lt;/a&gt;, I saw this note:&lt;br /&gt;
-&lt;code&gt;If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next&lt;/code&gt;&lt;/p&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;Because I wanted to be able to set up more tests by using MVVM, I decided that I felt adventurous enough to test the ViewModels without any UI.&lt;/p&gt;
 
@@ -108,11 +108,11 @@ The class is not necessary in our case because we can call the functions direclt
     &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;This was weird… a &lt;code&gt;RACTuple&lt;/code&gt; that is not a &lt;code&gt;RACTuple&lt;/code&gt;…&lt;/p&gt;
+&lt;p&gt;This was weird… a &lt;code class=&quot;highlighter-rouge&quot;&gt;RACTuple&lt;/code&gt; that is not a &lt;code class=&quot;highlighter-rouge&quot;&gt;RACTuple&lt;/code&gt;…&lt;/p&gt;
 
 &lt;p&gt;After some time digging, I found &lt;a href=&quot;https://github.com/ReactiveCocoa/ReactiveCocoa/issues/901&quot;&gt;this isssue&lt;/a&gt; in ReactiveCocoa github.&lt;/p&gt;
 
-&lt;p&gt;One explaination might be that we have more than only one &lt;code&gt;RACTuple&lt;/code&gt; class.&lt;/p&gt;
+&lt;p&gt;One explaination might be that we have more than only one &lt;code class=&quot;highlighter-rouge&quot;&gt;RACTuple&lt;/code&gt; class.&lt;/p&gt;
 
 &lt;p&gt;It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.&lt;br /&gt;
 By default, tests are run against the Host Application (see your Project &amp;gt; Targets &amp;gt; General)&lt;/p&gt;
@@ -129,7 +129,7 @@ By default, tests are run against the Host Application (see your Project &amp;gt
 
 &lt;ul&gt;
   &lt;li&gt;One solution is to change your testing settings and stop testing against the Application. In this case, you need to compile all the code you want to test in your test target. This can be quite cumbersome because every time you add a class in your App, you may need to add it to your test target. Another problem is that you run your tests outside the context of your running App, this can be problematic in some cases.&lt;/li&gt;
-  &lt;li&gt;Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: &lt;code&gt;$(PROJECT_DIR)/Pods/Headers&lt;/code&gt;. This is kind of dirty, but that do the trick.&lt;/li&gt;
+  &lt;li&gt;Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: &lt;code class=&quot;highlighter-rouge&quot;&gt;$(PROJECT_DIR)/Pods/Headers&lt;/code&gt;. This is kind of dirty, but that do the trick.&lt;/li&gt;
   &lt;li&gt;Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won’t relying of some generated settings on your project.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -159,17 +159,18 @@ By default, tests are run against the Host Application (see your Project &amp;gt
 
 &lt;p&gt;I am quite new at using Core Data.&lt;br /&gt;
 I have started to use it just a few months back, and I’ve been using it extensively the last couple of months.&lt;br /&gt;
-During this time, I have learned some things about &lt;code&gt;NSManagedObjectContext&lt;/code&gt; that I want to share.&lt;br /&gt;
+During this time, I have learned some things about &lt;code class=&quot;highlighter-rouge&quot;&gt;NSManagedObjectContext&lt;/code&gt; that I want to share.&lt;br /&gt;
 Here, I’ll explain how the saving mechanism works with multiple contexts created using different methods.&lt;/p&gt;
 
 &lt;p&gt;We’ll work with a very basic Core Data model which will contain only one single entity.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;+-----------------+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+-----------------+
 | Person          |
 +-----------------+
 | name            |
 +-----------------+
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Here is our context:&lt;/p&gt;
 
@@ -230,14 +231,15 @@ Here, I’ll explain how the saving mechanism works with multiple contexts creat
 &lt;p&gt;Wait, what? There is no data? What happened?&lt;/p&gt;
 
 &lt;p&gt;Here is the first important lesson to learn.&lt;br /&gt;
-Let’s have a look at the official documentation of &lt;code&gt;save()&lt;/code&gt;:&lt;/p&gt;
+Let’s have a look at the official documentation of &lt;code class=&quot;highlighter-rouge&quot;&gt;save()&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Attempts to commit unsaved changes to registered objects to the receiver’s
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Attempts to commit unsaved changes to registered objects to the receiver’s
 parent store.
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&lt;p&gt;This can be misleading. When one see &lt;code&gt;parent store&lt;/code&gt; he can understand &lt;code&gt;the parent persitent store of my context hierarchy&lt;/code&gt;.&lt;br /&gt;
-However, what is meant by &lt;code&gt;parent store&lt;/code&gt; is either:&lt;/p&gt;
+&lt;p&gt;This can be misleading. When one see &lt;code class=&quot;highlighter-rouge&quot;&gt;parent store&lt;/code&gt; he can understand &lt;code class=&quot;highlighter-rouge&quot;&gt;the parent persitent store of my context hierarchy&lt;/code&gt;.&lt;br /&gt;
+However, what is meant by &lt;code class=&quot;highlighter-rouge&quot;&gt;parent store&lt;/code&gt; is either:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;the persistentStoreCoordinator&lt;/li&gt;
@@ -245,7 +247,7 @@ However, what is meant by &lt;code&gt;parent store&lt;/code&gt; is either:&lt;/p
 &lt;/ul&gt;
 
 &lt;p&gt;So, if your context was setup with a parent context, changes are commited to his parent but no further.&lt;br /&gt;
-To save it to the persistent store, you’ll need to call &lt;code&gt;save()&lt;/code&gt; on contexts all the way up in the hierarchy until you reach the persistent store.&lt;/p&gt;
+To save it to the persistent store, you’ll need to call &lt;code class=&quot;highlighter-rouge&quot;&gt;save()&lt;/code&gt; on contexts all the way up in the hierarchy until you reach the persistent store.&lt;/p&gt;
 
 &lt;h2 id=&quot;fixing-our-first-approach&quot;&gt;Fixing our first approach&lt;/h2&gt;
 
@@ -299,7 +301,7 @@ For example, this entity could’ve come from another child context:&lt;/p&gt;
 
 &lt;p&gt;Oh no! We’ve saved “Billy” as well!&lt;/p&gt;
 
-&lt;p&gt;Yet, this seems coherent with the fact that, as we’ve performed a &lt;code&gt;save()&lt;/code&gt; on the main context, &lt;em&gt;all&lt;/em&gt; objects it contains are saved.&lt;/p&gt;
+&lt;p&gt;Yet, this seems coherent with the fact that, as we’ve performed a &lt;code class=&quot;highlighter-rouge&quot;&gt;save()&lt;/code&gt; on the main context, &lt;em&gt;all&lt;/em&gt; objects it contains are saved.&lt;/p&gt;
 
 &lt;p&gt;So what can we do if we only want to save John without saving Billy?&lt;/p&gt;
 
@@ -354,25 +356,25 @@ We will create what we’ll call a &lt;em&gt;sibling&lt;/em&gt; context. These a
 &lt;p&gt;Here, we learned that:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;calling &lt;code&gt;save()&lt;/code&gt; on a context will only send changes one step up the hierarchy&lt;/li&gt;
-  &lt;li&gt;&lt;code&gt;save()&lt;/code&gt; will commit changes contained in the whole context&lt;/li&gt;
+  &lt;li&gt;calling &lt;code class=&quot;highlighter-rouge&quot;&gt;save()&lt;/code&gt; on a context will only send changes one step up the hierarchy&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;save()&lt;/code&gt; will commit changes contained in the whole context&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;I hope that this may help anyone who did not yet grasp how Core Data save its content throught contexts.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;As a side note&lt;/strong&gt;: for the sake of simplicity here, we have only worked with entity insertion.&lt;br /&gt;
-When you start playing with entity attributes, you’ll need to perform some &lt;a href=&quot;https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:&quot;&gt;&lt;code&gt;refreshObject(_:mergeChanges:)&lt;/code&gt;&lt;/a&gt; calls to see the saved values in other contexts.&lt;/p&gt;
+When you start playing with entity attributes, you’ll need to perform some &lt;a href=&quot;https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;refreshObject(_:mergeChanges:)&lt;/code&gt;&lt;/a&gt; calls to see the saved values in other contexts.&lt;/p&gt;
 
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;&lt;code&gt;createPersistentStoreCoordinator&lt;/code&gt; and &lt;code&gt;addPersonToContext&lt;/code&gt; are helper functions to shorten the code in the article. You can find the code &lt;a href=&quot;https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift&quot;&gt;here&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:1:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;createPersistentStoreCoordinator&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;addPersonToContext&lt;/code&gt; are helper functions to shorten the code in the article. You can find the code &lt;a href=&quot;https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift&quot;&gt;here&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:1:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
     &lt;li id=&quot;fn:2&quot;&gt;
-      &lt;p&gt;Note that you should use &lt;code&gt;performBlock()&lt;/code&gt; to execute calls on a &lt;code&gt;NSManagedObjectContext&lt;/code&gt; to ensure that the correct thread is using it. &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;Note that you should use &lt;code class=&quot;highlighter-rouge&quot;&gt;performBlock()&lt;/code&gt; to execute calls on a &lt;code class=&quot;highlighter-rouge&quot;&gt;NSManagedObjectContext&lt;/code&gt; to ensure that the correct thread is using it. &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
     &lt;li id=&quot;fn:3&quot;&gt;
-      &lt;p&gt;as told before&lt;sup id=&quot;fnref:2:1&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;, don’t forget to use &lt;code&gt;performBlock()&lt;/code&gt; to call CoreData context code &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;as told before&lt;sup id=&quot;fnref:2:1&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;, don’t forget to use &lt;code class=&quot;highlighter-rouge&quot;&gt;performBlock()&lt;/code&gt; to call CoreData context code &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;

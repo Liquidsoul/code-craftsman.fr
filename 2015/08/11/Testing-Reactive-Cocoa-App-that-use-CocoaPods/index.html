@@ -131,7 +131,7 @@
   <p>Last weekend, I stumbled across something while trying to learn MVVM.</p>
 
 <p>I was playing with the <a href="http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1">Colin Eberhardt’s tutorial</a> which explains how to set up the pattern using ReactiveCocoa. As I was progressing through the <a href="http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2">second part</a>, I saw this note:<br />
-<code>If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next</code></p>
+<code class="highlighter-rouge">If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next</code></p>
 
 <p>Because I wanted to be able to set up more tests by using MVVM, I decided that I felt adventurous enough to test the ViewModels without any UI.</p>
 
@@ -165,11 +165,11 @@
     <span class="mi">1</span>
 <span class="p">)</span><span class="s">&quot;</span></code></pre></div>
 
-<p>This was weird… a <code>RACTuple</code> that is not a <code>RACTuple</code>…</p>
+<p>This was weird… a <code class="highlighter-rouge">RACTuple</code> that is not a <code class="highlighter-rouge">RACTuple</code>…</p>
 
 <p>After some time digging, I found <a href="https://github.com/ReactiveCocoa/ReactiveCocoa/issues/901">this isssue</a> in ReactiveCocoa github.</p>
 
-<p>One explaination might be that we have more than only one <code>RACTuple</code> class.</p>
+<p>One explaination might be that we have more than only one <code class="highlighter-rouge">RACTuple</code> class.</p>
 
 <p>It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.<br />
 By default, tests are run against the Host Application (see your Project &gt; Targets &gt; General)</p>
@@ -186,7 +186,7 @@ By default, tests are run against the Host Application (see your Project &gt; Ta
 
 <ul>
   <li>One solution is to change your testing settings and stop testing against the Application. In this case, you need to compile all the code you want to test in your test target. This can be quite cumbersome because every time you add a class in your App, you may need to add it to your test target. Another problem is that you run your tests outside the context of your running App, this can be problematic in some cases.</li>
-  <li>Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: <code>$(PROJECT_DIR)/Pods/Headers</code>. This is kind of dirty, but that do the trick.</li>
+  <li>Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: <code class="highlighter-rouge">$(PROJECT_DIR)/Pods/Headers</code>. This is kind of dirty, but that do the trick.</li>
   <li>Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>, I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won’t relying of some generated settings on your project.</li>
 </ul>
 
@@ -213,8 +213,8 @@ By default, tests are run against the Host Application (see your Project &gt; Ta
       
       <li>
         <h3>
-          <a href="/2015/12/21/Swift_TDD_and_Playground/">
-            Swift, TDD and Playground
+          <a href="/2015/12/21/Swift_TDD_and_Playgrounds/">
+            Swift, TDD and Playgrounds
             <small>21 Dec 2015</small>
             <p><small>Lately, I have been doing some TDD in Swift. While following the `red, green, refactor` cycle using the default Xcode test target, I found that…</small></p>
           </a>
