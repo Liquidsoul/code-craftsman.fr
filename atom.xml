@@ -4,13 +4,67 @@
  <title>Code Craftsman</title>
  <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
  <link href="http://code-craftsman.fr/"/>
- <updated>2015-10-13T22:15:03+02:00</updated>
+ <updated>2015-12-21T22:42:24+01:00</updated>
  <id>http://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
    <email>contact@code-craftsman.fr</email>
  </author>
 
+ 
+ <entry>
+   <title>Swift, TDD and Playground</title>
+   <link href="http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playground/"/>
+   <updated>2015-12-21T00:00:00+01:00</updated>
+   <id>http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playground</id>
+   <content type="html">&lt;p&gt;Lately, I have been doing some TDD in Swift.&lt;/p&gt;
+
+&lt;p&gt;While following the &lt;code&gt;red, green, refactor&lt;/code&gt; cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.&lt;br /&gt;
+So, I asked myself if there was not a faster way of doing this in Swift.&lt;/p&gt;
+
+&lt;p&gt;And the answer came quite easily. What do we use when we want to test something quickly in Swift?&lt;/p&gt;
+
+&lt;p&gt;That’s right, &lt;em&gt;Playgrounds&lt;/em&gt;!&lt;/p&gt;
+
+&lt;p&gt;So I have looked into how I could do TDD using a Playground with the following objective in mind:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;The final code must be easily moved into a classic Xcode project.&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;xctest-in-playground&quot;&gt;XCTest in Playground&lt;/h2&gt;
+
+&lt;p&gt;When we do unit tests in Xcode, we use the &lt;code&gt;XCTest&lt;/code&gt; framework.&lt;br /&gt;
+It gives us the &lt;code&gt;XCTestCase&lt;/code&gt; class to run our tests and &lt;code&gt;XCTAssert&lt;/code&gt; methods to check the results.&lt;br /&gt;
+The class is not necessary in our case because we can call the functions direclty to run the tests. But, the methods are.&lt;/p&gt;
+
+&lt;p&gt;Yet, when you try to import &lt;code&gt;XCTest&lt;/code&gt; in your iOS playground you will have this:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;error: cannot load underlying module for &#39;XCTest&#39;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;In order to use &lt;code&gt;XCTest&lt;/code&gt; directly, you have to use an OSX playground.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/XCTestPlayground/OSX_Playground.png&quot; alt=&quot;OSX Playground&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once done, using a method like &lt;code&gt;XCTFail&lt;/code&gt; will show you when there is a problem.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/XCTestPlayground/XCTest_exception.png&quot; alt=&quot;XCTFail error&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;But, as you can see, the error is shown on the line of the top-most caller, not on the line where the error actually is. This can prove finding a failing test cumbersome.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-xctestplayground-workaround&quot;&gt;The XCTestPlayground workaround&lt;/h2&gt;
+
+&lt;p&gt;To address these issues, I had the idea to implement my own &lt;code&gt;XCT&lt;/code&gt; methods using a nice feature of Playgrounds: &lt;code&gt;the display of the return value&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Here is the result:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/XCTestPlayground/XCTestPlayground.png&quot; alt=&quot;XCTestPlayground_example&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With that, you can write test code in a Playground and have direct feedback on which assert passes and which does not.&lt;/p&gt;
+
+&lt;p&gt;You can find my implementation of the asserts in &lt;a href=&quot;https://github.com/Liquidsoul/XCTestPlayground&quot;&gt;this repository&lt;/a&gt;. If you want to use this, just add the &lt;code&gt;XCTestPlayground.swift&lt;/code&gt; file to your Playground’s sources folder.&lt;/p&gt;
+
+&lt;p&gt;Note that I did not implement all the functions. For example, the &lt;code&gt;WithAccuracy&lt;/code&gt; ones are missing.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Testing a Reactive Cocoa App that uses CocoaPods</title>

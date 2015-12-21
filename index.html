@@ -77,6 +77,10 @@
     
       
         
+      
+    
+      
+        
           <a class="sidebar-nav-item" href="/posts/">All posts</a>
         
       
@@ -125,87 +129,59 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/">
-        Testing a Reactive Cocoa App that uses CocoaPods
+      <a href="/2015/12/21/Swift_TDD_and_Playground/">
+        Swift, TDD and Playground
       </a>
     </h1>
 
-    <span class="post-date">11 Aug 2015</span>
+    <span class="post-date">21 Dec 2015</span>
 
-    <p>Last weekend, I stumbled across something while trying to learn MVVM.</p>
+    <p>Lately, I have been doing some TDD in Swift.</p>
 
-<p>I was playing with the <a href="http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1">Colin Eberhardt’s tutorial</a> which explains how to set up the pattern using ReactiveCocoa. As I was progressing through the <a href="http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2">second part</a>, I saw this note:<br />
-<code>If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next</code></p>
+<p>While following the <code>red, green, refactor</code> cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.<br />
+So, I asked myself if there was not a faster way of doing this in Swift.</p>
 
-<p>Because I wanted to be able to set up more tests by using MVVM, I decided that I felt adventurous enough to test the ViewModels without any UI.</p>
+<p>And the answer came quite easily. What do we use when we want to test something quickly in Swift?</p>
 
-<h2 id="well-put-their-name-to-the-test">‘We’ll put their name to the test’</h2>
+<p>That’s right, <em>Playgrounds</em>!</p>
 
-<p>So I tried to set up a first basic test:</p>
+<p>So I have looked into how I could do TDD using a Playground with the following objective in mind:</p>
 
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testPerformSearch</span>
-<span class="p">{</span>
-	<span class="n">XCTestExpectation</span> <span class="o">*</span><span class="n">expectation</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">expectationWithDescription</span><span class="p">:</span><span class="s">@&quot;Search success&quot;</span><span class="p">];</span>
+<p><code>The final code must be easily moved into a classic Xcode project.</code></p>
 
-	<span class="kt">id</span><span class="o">&lt;</span><span class="n">RWTViewModelServices</span><span class="o">&gt;</span> <span class="n">viewModelServices</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MockService</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithPushBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="kt">id</span> <span class="n">viewModel</span><span class="p">)</span> <span class="p">{</span>
-		<span class="p">[</span><span class="n">expectation</span> <span class="n">fulfill</span><span class="p">];</span>
-	<span class="p">}];</span>
-	<span class="n">RWTFlickrSearchViewModel</span> <span class="o">*</span><span class="n">viewModel</span> <span class="o">=</span> <span class="p">[[</span><span class="n">RWTFlickrSearchViewModel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithServices</span><span class="p">:</span><span class="n">viewModelServices</span><span class="p">];</span>
+<h2 id="xctest-in-playground">XCTest in Playground</h2>
 
-	<span class="n">viewModel</span><span class="p">.</span><span class="n">searchText</span> <span class="o">=</span> <span class="s">@&quot;beach&quot;</span><span class="p">;</span>
-	<span class="p">[</span><span class="n">viewModel</span><span class="p">.</span><span class="n">executeSearch</span> <span class="nl">execute</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<p>When we do unit tests in Xcode, we use the <code>XCTest</code> framework.<br />
+It gives us the <code>XCTestCase</code> class to run our tests and <code>XCTAssert</code> methods to check the results.<br />
+The class is not necessary in our case because we can call the functions direclty to run the tests. But, the methods are.</p>
 
-	<span class="p">[</span><span class="nb">self</span> <span class="nl">waitForExpectationsWithTimeout</span><span class="p">:</span><span class="mi">2</span> <span class="nl">handler</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-<span class="p">}</span></code></pre></div>
+<p>Yet, when you try to import <code>XCTest</code> in your iOS playground you will have this:</p>
 
-<p>Because I was using some ReactiveCocoa here, it was necessary to import the ReactiveCocoa header to make this work. To do this, I just applied the same pod configuration to my test target:</p>
+<p><code>error: cannot load underlying module for 'XCTest'</code></p>
 
-<p><img src="/public/images/RAC_Issue/TestConfigurationFile.png" alt="Test configuration file" /></p>
+<p>In order to use <code>XCTest</code> directly, you have to use an OSX playground.</p>
 
-<p>Once my test compiled, I was quite confident that it would pass. However, here is what I got:</p>
+<p><img src="/public/images/XCTestPlayground/OSX_Playground.png" alt="OSX Playground" /></p>
 
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="nl">error</span><span class="p">:</span> <span class="o">-</span><span class="p">[</span><span class="n">ReactiveCocoaTestIssueTests</span> <span class="n">testExecute</span><span class="p">]</span> <span class="o">:</span> <span class="nl">failed</span><span class="p">:</span> <span class="n">caught</span> <span class="s">&quot;NSInternalInconsistencyException&quot;</span><span class="p">,</span> <span class="s">&quot;-and must only be used on a signal of RACTuples of NSNumbers. Instead, received: &lt;RACTuple: 0x7fdd8bd40af0&gt; (</span>
-    <span class="mi">0</span><span class="p">,</span>
-    <span class="mi">1</span>
-<span class="p">)</span><span class="s">&quot;</span></code></pre></div>
+<p>Once done, using a method like <code>XCTFail</code> will show you when there is a problem.</p>
 
-<p>This was weird… a <code>RACTuple</code> that is not a <code>RACTuple</code>…</p>
+<p><img src="/public/images/XCTestPlayground/XCTest_exception.png" alt="XCTFail error" /></p>
 
-<p>After some time digging, I found <a href="https://github.com/ReactiveCocoa/ReactiveCocoa/issues/901">this isssue</a> in ReactiveCocoa github.</p>
+<p>But, as you can see, the error is shown on the line of the top-most caller, not on the line where the error actually is. This can prove finding a failing test cumbersome.</p>
 
-<p>One explaination might be that we have more than only one <code>RACTuple</code> class.</p>
+<h2 id="the-xctestplayground-workaround">The XCTestPlayground workaround</h2>
 
-<p>It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.<br />
-By default, tests are run against the Host Application (see your Project &gt; Targets &gt; General)</p>
+<p>To address these issues, I had the idea to implement my own <code>XCT</code> methods using a nice feature of Playgrounds: <code>the display of the return value</code></p>
 
-<p><img src="/public/images/RAC_Issue/TestingDefaultSetup.jpg" alt="Testing target image" /></p>
+<p>Here is the result:</p>
 
-<p>and linking the test target to ReactiveCocoa <em>doubles</em> the symbols because Xcode perform some dynamic code injection behind the scene.</p>
+<p><img src="/public/images/XCTestPlayground/XCTestPlayground.png" alt="XCTestPlayground_example" /></p>
 
-<h2 id="getting-out-of-the-pit">Getting out of the pit</h2>
+<p>With that, you can write test code in a Playground and have direct feedback on which assert passes and which does not.</p>
 
-<p>There are multiple solutions to this, but, unfortunately, nothing straightforward which use CocoaPods. As I discovered, I am not the first one to stumble upon <a href="https://github.com/CocoaPods/CocoaPods/issues/1411">this</a> and the feature is still <a href="https://github.com/CocoaPods/CocoaPods/issues/840">missing</a>.</p>
+<p>You can find my implementation of the asserts in <a href="https://github.com/Liquidsoul/XCTestPlayground">this repository</a>. If you want to use this, just add the <code>XCTestPlayground.swift</code> file to your Playground’s sources folder.</p>
 
-<p>So what can one do ?</p>
-
-<ul>
-  <li>One solution is to change your testing settings and stop testing against the Application. In this case, you need to compile all the code you want to test in your test target. This can be quite cumbersome because every time you add a class in your App, you may need to add it to your test target. Another problem is that you run your tests outside the context of your running App, this can be problematic in some cases.</li>
-  <li>Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: <code>$(PROJECT_DIR)/Pods/Headers</code>. This is kind of dirty, but that do the trick.</li>
-  <li>Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>, I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won’t relying of some generated settings on your project.</li>
-</ul>
-
-<p>Maybe there are other solutions but, for now, I have just used the second one for my problem.</p>
-
-<p>If you want to see an example of the problem, I shared <a href="https://github.com/Liquidsoul/ReactiveCocoaTestIssue">a project on github</a>.</p>
-
-<p>I hope this will help someone!</p>
-<div class="footnotes">
-  <ol>
-    <li id="fn:1">
-      <p>injecting third-party libraries like if it was nothing <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
-    </li>
-  </ol>
-</div>
+<p>Note that I did not implement all the functions. For example, the <code>WithAccuracy</code> ones are missing.</p>
 
   </div>
   
