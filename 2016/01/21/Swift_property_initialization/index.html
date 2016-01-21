@@ -11,7 +11,7 @@
 
   <title>
     
-      Code Craftsman &middot; Software craftsmanship and iOS development
+      Swift property initialization &middot; Code Craftsman
     
   </title>
 
@@ -129,18 +129,10 @@
       </div>
 
       <div class="container content">
-        <div class="posts">
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2016/01/21/Swift_property_initialization/">
-        Swift property initialization
-      </a>
-    </h1>
-
-    <span class="post-date">21 Jan 2016</span>
-
-    <p>Let’s say we want to share a <code class="highlighter-rouge">NSDateFromatter</code> instance in the scope of a class, for example, a <code class="highlighter-rouge">UITableViewDataSource</code>. We would declare it like this:</p>
+        <div class="post">
+  <h1 class="post-title">Swift property initialization</h1>
+  <span class="post-date">21 Jan 2016</span>
+  <p>Let’s say we want to share a <code class="highlighter-rouge">NSDateFromatter</code> instance in the scope of a class, for example, a <code class="highlighter-rouge">UITableViewDataSource</code>. We would declare it like this:</p>
 
 <div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">class</span> <span class="nl">MyTableViewController</span><span class="p">:</span> <span class="bp">NSObject</span><span class="p">,</span> <span class="bp">UITableViewDataSource</span> <span class="p">{</span>
     <span class="k">let</span> <span class="nl">dateFormatter</span><span class="p">:</span> <span class="bp">NSDateFormatter</span>
@@ -220,18 +212,86 @@ To prevent cluttering up <code class="highlighter-rouge">init()</code> with all 
 
 <p>Hope that someone will find this useful!</p>
 
-  </div>
-  
 </div>
 
-<div class="pagination">
-  
-    <a class="pagination-item older" href="/page2">Older</a>
-  
-  
-    <span class="pagination-item newer">Newer</span>
-  
+
+<div class="related">
+  <h2>Previous posts</h2>
+  <ul class="related-posts">
+    
+      
+    
+      
+      <li>
+        <h3>
+          <a href="/2015/12/21/Swift_TDD_and_Playgrounds/">
+            Swift, TDD and Playgrounds
+            <small>21 Dec 2015</small>
+            <p><small>Lately, I have been doing some TDD in Swift. While following the red, green, refactor cycle using the default Xcode test target, I found that…</small></p>
+          </a>
+        </h3>
+      </li>
+      
+    
+      
+      <li>
+        <h3>
+          <a href="/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/">
+            Testing a Reactive Cocoa App that uses CocoaPods
+            <small>11 Aug 2015</small>
+            <p><small>Last weekend, I stumbled across something while trying to learn MVVM. I was playing with the Colin Eberhardt’s tutorial which explains how to set up…</small></p>
+          </a>
+        </h3>
+      </li>
+      
+    
+      
+      <li>
+        <h3>
+          <a href="/2015/08/04/saving-core-data-objects/">
+            Saving CoreData objects
+            <small>04 Aug 2015</small>
+            <p><small>The associated playground can be found in this repo! The context I am quite new at using Core Data. I have started to use it…</small></p>
+          </a>
+        </h3>
+      </li>
+      
+    
+      
+      <li>
+        <h3>
+          <a href="/2015/07/30/my-very-first-post/">
+            My very first post
+            <small>30 Jul 2015</small>
+            <p><small>Hi!
+
+This is my first blog post ever and, hopefully, it will be the first of many to come.
+</small></p>
+          </a>
+        </h3>
+      </li>
+      
+    
+  </ul>
 </div>
+
+
+<!-- Add Disqus comments. -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'codecraftsmanfr'; // required: replace example with your forum shortname
+  var disqus_identifier = "/2016/01/21/Swift_property_initialization/";
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
 
       </div>

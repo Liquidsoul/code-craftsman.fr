@@ -81,6 +81,10 @@
     
       
         
+      
+    
+      
+        
           <a class="sidebar-nav-item" href="/posts/">All posts</a>
         
       
@@ -91,7 +95,7 @@
 
   <div class="sidebar-item">
     <p>
-      &copy; 2015. All rights reserved.
+      &copy; 2016. All rights reserved.
     </p>
   </div>
     <div class="infos">
@@ -129,235 +133,84 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="/2015/08/04/saving-core-data-objects/">
-        Saving CoreData objects
+      <a href="/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/">
+        Testing a Reactive Cocoa App that uses CocoaPods
       </a>
     </h1>
 
-    <span class="post-date">04 Aug 2015</span>
+    <span class="post-date">11 Aug 2015</span>
 
-    <p>The associated playground can be found <a href="https://github.com/Liquidsoul/coredata-saving-contexts">in this repo</a>!</p>
+    <p>Last weekend, I stumbled across something while trying to learn MVVM.</p>
 
-<h2 id="the-context">The context</h2>
+<p>I was playing with the <a href="http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1">Colin Eberhardt’s tutorial</a> which explains how to set up the pattern using ReactiveCocoa. As I was progressing through the <a href="http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2">second part</a>, I saw this note:<br />
+<code class="highlighter-rouge">If you’re feeling adventurous, prove it by writing a unit test that executes a search and navigates from one ViewModel to the next</code></p>
 
-<p>I am quite new at using Core Data.<br />
-I have started to use it just a few months back, and I’ve been using it extensively the last couple of months.<br />
-During this time, I have learned some things about <code class="highlighter-rouge">NSManagedObjectContext</code> that I want to share.<br />
-Here, I’ll explain how the saving mechanism works with multiple contexts created using different methods.</p>
+<p>Because I wanted to be able to set up more tests by using MVVM, I decided that I felt adventurous enough to test the ViewModels without any UI.</p>
 
-<p>We’ll work with a very basic Core Data model which will contain only one single entity.</p>
+<h2 id="well-put-their-name-to-the-test">‘We’ll put their name to the test’</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>+-----------------+
-| Person          |
-+-----------------+
-| name            |
-+-----------------+
-</code></pre>
-</div>
+<p>So I tried to set up a first basic test:</p>
 
-<p>Here is our context:</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testPerformSearch</span>
+<span class="p">{</span>
+	<span class="n">XCTestExpectation</span> <span class="o">*</span><span class="n">expectation</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">expectationWithDescription</span><span class="p">:</span><span class="s">@&quot;Search success&quot;</span><span class="p">];</span>
+
+	<span class="kt">id</span><span class="o">&lt;</span><span class="n">RWTViewModelServices</span><span class="o">&gt;</span> <span class="n">viewModelServices</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MockService</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithPushBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="kt">id</span> <span class="n">viewModel</span><span class="p">)</span> <span class="p">{</span>
+		<span class="p">[</span><span class="n">expectation</span> <span class="n">fulfill</span><span class="p">];</span>
+	<span class="p">}];</span>
+	<span class="n">RWTFlickrSearchViewModel</span> <span class="o">*</span><span class="n">viewModel</span> <span class="o">=</span> <span class="p">[[</span><span class="n">RWTFlickrSearchViewModel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithServices</span><span class="p">:</span><span class="n">viewModelServices</span><span class="p">];</span>
+
+	<span class="n">viewModel</span><span class="p">.</span><span class="n">searchText</span> <span class="o">=</span> <span class="s">@&quot;beach&quot;</span><span class="p">;</span>
+	<span class="p">[</span><span class="n">viewModel</span><span class="p">.</span><span class="n">executeSearch</span> <span class="nl">execute</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+
+	<span class="p">[</span><span class="nb">self</span> <span class="nl">waitForExpectationsWithTimeout</span><span class="p">:</span><span class="mi">2</span> <span class="nl">handler</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Because I was using some ReactiveCocoa here, it was necessary to import the ReactiveCocoa header to make this work. To do this, I just applied the same pod configuration to my test target:</p>
+
+<p><img src="/public/images/RAC_Issue/TestConfigurationFile.png" alt="Test configuration file" /></p>
+
+<p>Once my test compiled, I was quite confident that it would pass. However, here is what I got:</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="nl">error</span><span class="p">:</span> <span class="o">-</span><span class="p">[</span><span class="n">ReactiveCocoaTestIssueTests</span> <span class="n">testExecute</span><span class="p">]</span> <span class="o">:</span> <span class="nl">failed</span><span class="p">:</span> <span class="n">caught</span> <span class="s">&quot;NSInternalInconsistencyException&quot;</span><span class="p">,</span> <span class="s">&quot;-and must only be used on a signal of RACTuples of NSNumbers. Instead, received: &lt;RACTuple: 0x7fdd8bd40af0&gt; (</span>
+    <span class="mi">0</span><span class="p">,</span>
+    <span class="mi">1</span>
+<span class="p">)</span><span class="s">&quot;</span></code></pre></div>
+
+<p>This was weird… a <code class="highlighter-rouge">RACTuple</code> that is not a <code class="highlighter-rouge">RACTuple</code>…</p>
+
+<p>After some time digging, I found <a href="https://github.com/ReactiveCocoa/ReactiveCocoa/issues/901">this isssue</a> in ReactiveCocoa github.</p>
+
+<p>One explaination might be that we have more than only one <code class="highlighter-rouge">RACTuple</code> class.</p>
+
+<p>It appears that this is related to some setup issues with CocoaPods that does not operate well with the default test setup of Xcode.<br />
+By default, tests are run against the Host Application (see your Project &gt; Targets &gt; General)</p>
+
+<p><img src="/public/images/RAC_Issue/TestingDefaultSetup.jpg" alt="Testing target image" /></p>
+
+<p>and linking the test target to ReactiveCocoa <em>doubles</em> the symbols because Xcode perform some dynamic code injection behind the scene.</p>
+
+<h2 id="getting-out-of-the-pit">Getting out of the pit</h2>
+
+<p>There are multiple solutions to this, but, unfortunately, nothing straightforward which use CocoaPods. As I discovered, I am not the first one to stumble upon <a href="https://github.com/CocoaPods/CocoaPods/issues/1411">this</a> and the feature is still <a href="https://github.com/CocoaPods/CocoaPods/issues/840">missing</a>.</p>
+
+<p>So what can one do ?</p>
 
 <ul>
-  <li>we’ve got a main context that is used by our controllers</li>
-  <li>we want to refresh our data using server requests and store it asynchronously to Core Data (server requests are another topic so we will skip this part)</li>
+  <li>One solution is to change your testing settings and stop testing against the Application. In this case, you need to compile all the code you want to test in your test target. This can be quite cumbersome because every time you add a class in your App, you may need to add it to your test target. Another problem is that you run your tests outside the context of your running App, this can be problematic in some cases.</li>
+  <li>Another quicker solution I found was to add the Pods headers folder to the Test target’s header path recursively: <code class="highlighter-rouge">$(PROJECT_DIR)/Pods/Headers</code>. This is kind of dirty, but that do the trick.</li>
+  <li>Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>, I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won’t relying of some generated settings on your project.</li>
 </ul>
 
-<h2 id="the-first-approach">The first approach</h2>
-<p>To get started quickly with our topic, the heavy lifting of creating the model and persistent store coordinator will be done behind the scene<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>:</p>
+<p>Maybe there are other solutions but, for now, I have just used the second one for my problem.</p>
 
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">import</span> <span class="n">CoreData</span>
+<p>If you want to see an example of the problem, I shared <a href="https://github.com/Liquidsoul/ReactiveCocoaTestIssue">a project on github</a>.</p>
 
-<span class="k">let</span> <span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">try</span> <span class="n">createPersistentStoreCoordinator</span><span class="p">()</span></code></pre></div>
-
-<p>Now that we have our persistentStoreCoordinator, we create our main context:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">mainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span></code></pre></div>
-
-<p>As we want to share data between the two contexts, we create a child context for our background update:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">childContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">childContext</span><span class="p">.</span><span class="n">parentContext</span> <span class="o">=</span> <span class="n">mainContext</span></code></pre></div>
-
-<p>Then, we create a new entity in the child context as if it came from the server<sup id="fnref:1:1"><a href="#fn:1" class="footnote">1</a></sup>:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">person</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">childContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">)</span></code></pre></div>
-
-<p>Now we save our content<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">try</span> <span class="n">childContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></div>
-
-<p>Let’s check that we have the new content in the main context using a fetch request:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">results</span> <span class="o">=</span> <span class="n">try</span> <span class="n">mainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="bp">NSFetchRequest</span><span class="p">(</span><span class="nl">entityName</span><span class="p">:</span> <span class="s">&quot;Person&quot;</span><span class="p">))</span>
-<span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">results</span><span class="p">.</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="n">createdPerson</span><span class="p">)</span>	<span class="c1">// &quot;name: John&quot;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="s">&quot;Noone there!&quot;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div>
-
-<p>Yes! Everything seems ok.</p>
-
-<p>To be sure, let’s just check if everything was saved in the persistent store using a third context as if we were launching our app again:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">secondLaunchMainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span></code></pre></div>
-
-<p>and fetch our data:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">try</span> <span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="bp">NSFetchRequest</span><span class="p">(</span><span class="nl">entityName</span><span class="p">:</span> <span class="s">&quot;Person&quot;</span><span class="p">)).</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="n">createdPerson</span><span class="p">)</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="s">&quot;Noone there!&quot;</span><span class="p">)</span>	<span class="c1">// &quot;Noone there!&quot;</span>
-<span class="p">}</span></code></pre></div>
-
-<p>Wait, what? There is no data? What happened?</p>
-
-<p>Here is the first important lesson to learn.<br />
-Let’s have a look at the official documentation of <code class="highlighter-rouge">save()</code>:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>Attempts to commit unsaved changes to registered objects to the receiver’s
-parent store.
-</code></pre>
-</div>
-
-<p>This can be misleading. When one see <code class="highlighter-rouge">parent store</code> he can understand <code class="highlighter-rouge">the parent persitent store of my context hierarchy</code>.<br />
-However, what is meant by <code class="highlighter-rouge">parent store</code> is either:</p>
-
-<ul>
-  <li>the persistentStoreCoordinator</li>
-  <li>the parentContext</li>
-</ul>
-
-<p>So, if your context was setup with a parent context, changes are commited to his parent but no further.<br />
-To save it to the persistent store, you’ll need to call <code class="highlighter-rouge">save()</code> on contexts all the way up in the hierarchy until you reach the persistent store.</p>
-
-<h2 id="fixing-our-first-approach">Fixing our first approach</h2>
-
-<p>So, we have our initial setup.</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">import</span> <span class="n">CoreData</span>
-
-<span class="k">let</span> <span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">try</span> <span class="n">createPersistentStoreCoordinator</span><span class="p">()</span>
-<span class="k">let</span> <span class="n">mainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span></code></pre></div>
-
-<p>But to spice it a little, let’s create another entity that will exist in the main context.<br />
-For example, this entity could’ve come from another child context:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">ourOtherPerson</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">mainContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span></code></pre></div>
-
-<p>Now, we continue as before with the server data we want to save in the persistent store:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">childContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">childContext</span><span class="p">.</span><span class="n">parentContext</span> <span class="o">=</span> <span class="n">mainContext</span>
-<span class="k">let</span> <span class="n">person</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">childContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">)</span></code></pre></div>
-
-<p>Now, as we’ve learned before, we save our content in the child context and then in the main context<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">try</span> <span class="n">childContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
-<span class="n">try</span> <span class="n">mainContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></div>
-
-<p>We have saved our “John” in the persistent store, let’s check that:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">secondLaunchMainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
-
-<span class="k">let</span> <span class="n">fetchRequest</span> <span class="o">=</span> <span class="bp">NSFetchRequest</span><span class="p">(</span><span class="nl">entityName</span><span class="p">:</span> <span class="s">&quot;Person&quot;</span><span class="p">)</span>
-<span class="n">fetchRequest</span><span class="p">.</span><span class="n">predicate</span> <span class="o">=</span> <span class="bp">NSPredicate</span><span class="p">(</span><span class="nl">format</span><span class="p">:</span><span class="s">&quot;%K like %@&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;John&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">try</span> <span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="n">fetchRequest</span><span class="p">).</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="n">createdPerson</span><span class="p">)</span>	<span class="c1">// &quot;name: John&quot;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="s">&quot;Noone there!&quot;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div>
-
-<p>Problem solved!</p>
-
-<p>But wait… what happened to our “Billy”. We wanted to store only “John” into the persitent store, not “Billy”:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fetchRequest</span><span class="p">.</span><span class="n">predicate</span> <span class="o">=</span> <span class="bp">NSPredicate</span><span class="p">(</span><span class="nl">format</span><span class="p">:</span><span class="s">&quot;%K like %@&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">try</span> <span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="n">fetchRequest</span><span class="p">).</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="n">createdPerson</span><span class="p">)</span>	<span class="c1">// &quot;name: Billy&quot;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="s">&quot;Noone there!&quot;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div>
-
-<p>Oh no! We’ve saved “Billy” as well!</p>
-
-<p>Yet, this seems coherent with the fact that, as we’ve performed a <code class="highlighter-rouge">save()</code> on the main context, <em>all</em> objects it contains are saved.</p>
-
-<p>So what can we do if we only want to save John without saving Billy?</p>
-
-<h2 id="confined-save">Confined save</h2>
-
-<p>Let’s do it again, we setup our main context with “Billy”</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">import</span> <span class="n">CoreData</span>
-
-<span class="k">let</span> <span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">try</span> <span class="n">createPersistentStoreCoordinator</span><span class="p">()</span>
-<span class="k">let</span> <span class="n">mainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">mainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
-<span class="k">let</span> <span class="n">ourOtherPerson</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">mainContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span></code></pre></div>
-
-<p>Then, to prevent “Billy” to be saved while we just want to save “John”, we will not create our editing context as a child of the main.<br />
-We will create what we’ll call a <em>sibling</em> context. These are contexts that share the same persitent store coordinator:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">siblingContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">siblingContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
-<span class="k">let</span> <span class="n">person</span> <span class="o">=</span> <span class="n">addPersonToContext</span><span class="p">(</span><span class="n">siblingContext</span><span class="p">,</span> <span class="nl">name</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">)</span></code></pre></div>
-
-<p>Now, all we have to do is save the sibling context:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">try</span> <span class="n">siblingContext</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></div>
-
-<p>Let’s check that we can access our “John” from our main context:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">fetchRequest</span> <span class="o">=</span> <span class="bp">NSFetchRequest</span><span class="p">(</span><span class="nl">entityName</span><span class="p">:</span> <span class="s">&quot;Person&quot;</span><span class="p">)</span>
-<span class="n">fetchRequest</span><span class="p">.</span><span class="n">predicate</span> <span class="o">=</span> <span class="bp">NSPredicate</span><span class="p">(</span><span class="nl">format</span><span class="p">:</span><span class="s">&quot;%K like %@&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;John&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">try</span> <span class="n">mainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="n">fetchRequest</span><span class="p">).</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="n">createdPerson</span><span class="p">)</span>	<span class="c1">// &quot;name: John&quot;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="s">&quot;Noone there!&quot;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div>
-
-<p>Yes! Now let’s see if “Billy” was saved:</p>
-
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">secondLaunchMainContext</span> <span class="o">=</span> <span class="bp">NSManagedObjectContext</span><span class="p">(</span><span class="nl">concurrencyType</span><span class="p">:</span> <span class="p">.</span><span class="n">MainQueueConcurrencyType</span><span class="p">)</span>
-<span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">persistentStoreCoordinator</span> <span class="o">=</span> <span class="n">persistentStoreCoordinator</span>
-
-<span class="n">fetchRequest</span><span class="p">.</span><span class="n">predicate</span> <span class="o">=</span> <span class="bp">NSPredicate</span><span class="p">(</span><span class="nl">format</span><span class="p">:</span><span class="s">&quot;%K like %@&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;Billy&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="k">let</span> <span class="n">createdPerson</span> <span class="o">=</span> <span class="n">try</span> <span class="n">secondLaunchMainContext</span><span class="p">.</span><span class="n">executeFetchRequest</span><span class="p">(</span><span class="n">fetchRequest</span><span class="p">).</span><span class="n">first</span> <span class="kt">as</span><span class="o">?</span> <span class="n">Person</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="n">createdPerson</span><span class="p">)</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-	<span class="n">print</span><span class="p">(</span><span class="s">&quot;Noone there!&quot;</span><span class="p">)</span>	<span class="c1">// &quot;Noone there!&quot;</span>
-<span class="p">}</span></code></pre></div>
-
-<p>We did it!</p>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>Here, we learned that:</p>
-
-<ul>
-  <li>calling <code class="highlighter-rouge">save()</code> on a context will only send changes one step up the hierarchy</li>
-  <li><code class="highlighter-rouge">save()</code> will commit changes contained in the whole context</li>
-</ul>
-
-<p>I hope that this may help anyone who did not yet grasp how Core Data save its content throught contexts.</p>
-
-<p><strong>As a side note</strong>: for the sake of simplicity here, we have only worked with entity insertion.<br />
-When you start playing with entity attributes, you’ll need to perform some <a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:"><code class="highlighter-rouge">refreshObject(_:mergeChanges:)</code></a> calls to see the saved values in other contexts.</p>
-
+<p>I hope this will help someone!</p>
 <div class="footnotes">
   <ol>
     <li id="fn:1">
-      <p><code class="highlighter-rouge">createPersistentStoreCoordinator</code> and <code class="highlighter-rouge">addPersonToContext</code> are helper functions to shorten the code in the article. You can find the code <a href="https://github.com/Liquidsoul/coredata-saving-contexts/blob/master/CoreDataSavingContexts.playground/Sources/CoreDataSetup.swift">here</a> <a href="#fnref:1" class="reversefootnote">&#8617;</a> <a href="#fnref:1:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
-    </li>
-    <li id="fn:2">
-      <p>Note that you should use <code class="highlighter-rouge">performBlock()</code> to execute calls on a <code class="highlighter-rouge">NSManagedObjectContext</code> to ensure that the correct thread is using it. <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:3">
-      <p>as told before<sup id="fnref:2:1"><a href="#fn:2" class="footnote">2</a></sup>, don’t forget to use <code class="highlighter-rouge">performBlock()</code> to call CoreData context code <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+      <p>injecting third-party libraries like if it was nothing <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>
