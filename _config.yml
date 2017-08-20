@@ -1,4 +1,4 @@
-exclude:			[setup.sh, bin, Gemfile, Gemfile.lock, fastlane]
+exclude:			[.editorconfig, setup.sh, bin, Gemfile, Gemfile.lock, fastlane]
 
 # Dependencies
 markdown:            kramdown
