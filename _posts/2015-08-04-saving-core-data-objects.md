@@ -28,36 +28,36 @@ Here is our context:
 ## The first approach
 To get started quickly with our topic, the heavy lifting of creating the model and persistent store coordinator will be done behind the scene[^1]:
 
-{% highlight swift %}
+```swift
 import CoreData
 
 let persistentStoreCoordinator = try createPersistentStoreCoordinator()
 
-{% endhighlight %}
+```
 Now that we have our persistentStoreCoordinator, we create our main context:
-{% highlight swift %}
+```swift
 let mainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
-{% endhighlight %}
+```
 As we want to share data between the two contexts, we create a child context for our background update:
-{% highlight swift %}
+```swift
 let childContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 childContext.parentContext = mainContext
 
-{% endhighlight %}
+```
 Then, we create a new entity in the child context as if it came from the server[^1]:
-{% highlight swift %}
+```swift
 let person = addPersonToContext(childContext, name: "John")
 
-{% endhighlight %}
+```
 Now we save our content[^2]:
-{% highlight swift %}
+```swift
 try childContext.save()
 
-{% endhighlight %}
+```
 Let's check that we have the new content in the main context using a fetch request:
-{% highlight swift %}
+```swift
 let results = try mainContext.executeFetchRequest(NSFetchRequest(entityName: "Person"))
 if let createdPerson = results.first as? Person {
 	print(createdPerson)	// "name: John"
@@ -65,24 +65,24 @@ if let createdPerson = results.first as? Person {
 	print("Noone there!")
 }
 
-{% endhighlight %}
+```
 Yes! Everything seems ok.
 
 To be sure, let's just check if everything was saved in the persistent store using a third context as if we were launching our app again:
-{% highlight swift %}
+```swift
 let secondLaunchMainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 secondLaunchMainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
-{% endhighlight %}
+```
 and fetch our data:
-{% highlight swift %}
+```swift
 if let createdPerson = try secondLaunchMainContext.executeFetchRequest(NSFetchRequest(entityName: "Person")).first as? Person {
 	print(createdPerson)
 } else {
 	print("Noone there!")	// "Noone there!"
 }
 
-{% endhighlight %}
+```
 Wait, what? There is no data? What happened?
 
 Here is the first important lesson to learn.
@@ -111,35 +111,35 @@ To save it to the persistent store, you'll need to call `save()` on contexts all
 
 So, we have our initial setup.
 
-{% highlight swift %}
+```swift
 import CoreData
 
 let persistentStoreCoordinator = try createPersistentStoreCoordinator()
 let mainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
-{% endhighlight %}
+```
 But to spice it a little, let's create another entity that will exist in the main context.
 For example, this entity could've come from another child context:
-{% highlight swift %}
+```swift
 let ourOtherPerson = addPersonToContext(mainContext, name: "Billy")
 
-{% endhighlight %}
+```
 Now, we continue as before with the server data we want to save in the persistent store:
-{% highlight swift %}
+```swift
 let childContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 childContext.parentContext = mainContext
 let person = addPersonToContext(childContext, name: "John")
 
-{% endhighlight %}
+```
 Now, as we've learned before, we save our content in the child context and then in the main context[^3]:
-{% highlight swift %}
+```swift
 try childContext.save()
 try mainContext.save()
 
-{% endhighlight %}
+```
 We have saved our "John" in the persistent store, let's check that:
-{% highlight swift %}
+```swift
 let secondLaunchMainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 secondLaunchMainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
@@ -151,11 +151,11 @@ if let createdPerson = try secondLaunchMainContext.executeFetchRequest(fetchRequ
 	print("Noone there!")
 }
 
-{% endhighlight %}
+```
 Problem solved!
 
 But wait... what happened to our "Billy". We wanted to store only "John" into the persitent store, not "Billy":
-{% highlight swift %}
+```swift
 fetchRequest.predicate = NSPredicate(format:"%K like %@", "name", "Billy")
 if let createdPerson = try secondLaunchMainContext.executeFetchRequest(fetchRequest).first as? Person {
 	print(createdPerson)	// "name: Billy"
@@ -163,7 +163,7 @@ if let createdPerson = try secondLaunchMainContext.executeFetchRequest(fetchRequ
 	print("Noone there!")
 }
 
-{% endhighlight %}
+```
 Oh no! We've saved "Billy" as well!
 
 Yet, this seems coherent with the fact that, as we've performed a `save()` on the main context, *all* objects it contains are saved.
@@ -177,7 +177,7 @@ So what can we do if we only want to save John without saving Billy?
 
 Let's do it again, we setup our main context with "Billy"
 
-{% highlight swift %}
+```swift
 import CoreData
 
 let persistentStoreCoordinator = try createPersistentStoreCoordinator()
@@ -185,23 +185,23 @@ let mainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyT
 mainContext.persistentStoreCoordinator = persistentStoreCoordinator
 let ourOtherPerson = addPersonToContext(mainContext, name: "Billy")
 
-{% endhighlight %}
+```
 Then, to prevent "Billy" to be saved while we just want to save "John", we will not create our editing context as a child of the main.
 We will create what we'll call a *sibling* context. These are contexts that share the same persitent store coordinator:
 
-{% highlight swift %}
+```swift
 let siblingContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 siblingContext.persistentStoreCoordinator = persistentStoreCoordinator
 let person = addPersonToContext(siblingContext, name: "John")
 
-{% endhighlight %}
+```
 Now, all we have to do is save the sibling context:
-{% highlight swift %}
+```swift
 try siblingContext.save()
 
-{% endhighlight %}
+```
 Let's check that we can access our "John" from our main context:
-{% highlight swift %}
+```swift
 let fetchRequest = NSFetchRequest(entityName: "Person")
 fetchRequest.predicate = NSPredicate(format:"%K like %@", "name", "John")
 if let createdPerson = try mainContext.executeFetchRequest(fetchRequest).first as? Person {
@@ -210,9 +210,9 @@ if let createdPerson = try mainContext.executeFetchRequest(fetchRequest).first a
 	print("Noone there!")
 }
 
-{% endhighlight %}
+```
 Yes! Now let's see if "Billy" was saved:
-{% highlight swift %}
+```swift
 let secondLaunchMainContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 secondLaunchMainContext.persistentStoreCoordinator = persistentStoreCoordinator
 
@@ -223,7 +223,7 @@ if let createdPerson = try secondLaunchMainContext.executeFetchRequest(fetchRequ
 	print("Noone there!")	// "Noone there!"
 }
 
-{% endhighlight %}
+```
 We did it!
 
 ## Conclusion
@@ -238,4 +238,3 @@ I hope that this may help anyone who did not yet grasp how Core Data save its co
 
 __As a side note__: for the sake of simplicity here, we have only worked with entity insertion.
 When you start playing with entity attributes, you'll need to perform some [`refreshObject(_:mergeChanges:)`](https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObjectContext_Class/index.html#//apple_ref/occ/instm/NSManagedObjectContext/refreshObject:mergeChanges:) calls to see the saved values in other contexts.
-

@@ -14,22 +14,22 @@ Because I wanted to be able to set up more tests by using MVVM, I decided that I
 
 So I tried to set up a first basic test:
 
-{% highlight objective-c %}
+```objc
 - (void)testPerformSearch
 {
-	XCTestExpectation *expectation = [self expectationWithDescription:@"Search success"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Search success"];
 
-	id<RWTViewModelServices> viewModelServices = [[MockService alloc] initWithPushBlock:^(id viewModel) {
-		[expectation fulfill];
-	}];
-	RWTFlickrSearchViewModel *viewModel = [[RWTFlickrSearchViewModel alloc] initWithServices:viewModelServices];
+    id<RWTViewModelServices> viewModelServices = [[MockService alloc] initWithPushBlock:^(id viewModel) {
+        [expectation fulfill];
+    }];
+    RWTFlickrSearchViewModel *viewModel = [[RWTFlickrSearchViewModel alloc] initWithServices:viewModelServices];
 
-	viewModel.searchText = @"beach";
-	[viewModel.executeSearch execute:nil];
+    viewModel.searchText = @"beach";
+    [viewModel.executeSearch execute:nil];
 
-	[self waitForExpectationsWithTimeout:2 handler:nil];
+    [self waitForExpectationsWithTimeout:2 handler:nil];
 }
-{% endhighlight %}
+```
 
 Because I was using some ReactiveCocoa here, it was necessary to import the ReactiveCocoa header to make this work. To do this, I just applied the same pod configuration to my test target:
 
@@ -37,12 +37,12 @@ Because I was using some ReactiveCocoa here, it was necessary to import the Reac
 
 Once my test compiled, I was quite confident that it would pass. However, here is what I got:
 
-{% highlight objective-c %}
+```objc
 error: -[ReactiveCocoaTestIssueTests testExecute] : failed: caught "NSInternalInconsistencyException", "-and must only be used on a signal of RACTuples of NSNumbers. Instead, received: <RACTuple: 0x7fdd8bd40af0> (
     0,
     1
 )"
-{% endhighlight %}
+```
 
 This was weird... a `RACTuple` that is not a `RACTuple`...
 
@@ -61,11 +61,11 @@ and linking the test target to ReactiveCocoa *doubles* the symbols because Xcode
 
 There are multiple solutions to this, but, unfortunately, nothing straightforward which use CocoaPods. As I discovered, I am not the first one to stumble upon [this](https://github.com/CocoaPods/CocoaPods/issues/1411) and the feature is still [missing](https://github.com/CocoaPods/CocoaPods/issues/840).
 
-So what can one do ?
+So what can one do?
 
 * One solution is to change your testing settings and stop testing against the Application. In this case, you need to compile all the code you want to test in your test target. This can be quite cumbersome because every time you add a class in your App, you may need to add it to your test target. Another problem is that you run your tests outside the context of your running App, this can be problematic in some cases.
-* Another quicker solution I found was to add the Pods headers folder to the Test target's header path recursively: `$(PROJECT_DIR)/Pods/Headers`. This is kind of dirty, but that do the trick.
-* Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value[^1], I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won't relying of some generated settings on your project.
+* Another quicker solution I found was to add the Pods headers folder to the Test target's header path recursively: `$(PROJECT_DIR)/Pods/Headers`. This is kind of dirty, but it does the trick.
+* Last, but not least, setting up your project/workspace entirely by yourself is, of course, a viable solution. I am still new to CocoaPods, and as I see its immediate value[^1], I am also wondering if relying on it in the long run might have some annoying downsides. I have been a long time user of git submodules. So you could still do this because you won't be relying of some generated settings on your project.
 
 [^1]: injecting third-party libraries like if it was nothing
 
