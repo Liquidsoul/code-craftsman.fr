@@ -95,7 +95,7 @@
 
   <div class="sidebar-item">
     <p>
-      &copy; 2016. All rights reserved.
+      &copy; 2017. All rights reserved.
     </p>
   </div>
     <div class="infos">
@@ -142,58 +142,66 @@
 
     <p>Let’s say we want to share a <code class="highlighter-rouge">NSDateFromatter</code> instance in the scope of a class, for example, a <code class="highlighter-rouge">UITableViewDataSource</code>. We would declare it like this:</p>
 
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">class</span> <span class="nl">MyTableViewController</span><span class="p">:</span> <span class="bp">NSObject</span><span class="p">,</span> <span class="bp">UITableViewDataSource</span> <span class="p">{</span>
-    <span class="k">let</span> <span class="nl">dateFormatter</span><span class="p">:</span> <span class="bp">NSDateFormatter</span>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">MyTableViewController</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UITableViewDataSource</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">dateFormatter</span><span class="p">:</span> <span class="kt">NSDateFormatter</span>
 
-    <span class="kr">override</span> <span class="k">init</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="bp">NSDateFormatter</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span>
+    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
     <span class="p">}</span>
 
     <span class="c1">// protocol implementation skipped, not relevant in this example</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>As you can see, we need to initialize <code class="highlighter-rouge">dateFormatter</code> in <code class="highlighter-rouge">init()</code>. And to be sure the formatter is correctly configured, we would need to do it there too:</p>
 
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kr">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="bp">NSDateFormatter</span><span class="p">()</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span><span class="p">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">NoStyle</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span><span class="p">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">FullStyle</span>
-        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span>
-    <span class="p">}</span></code></pre></div>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code>    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
 
-<p>I like to have tiny functions with explicit names.<br />
+<p>I like to have tiny functions with explicit names.
 But, as of today, we cannot factorize all of this in a method of <code class="highlighter-rouge">MyTableViewController</code> because <code class="highlighter-rouge">self</code> is not initialized. We need to split instanciation and configuration:</p>
 
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kr">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="bp">NSDateFormatter</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">configureDateFormatter</span><span class="p">()</span>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code>    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+        <span class="k">self</span><span class="o">.</span><span class="nf">configureDateFormatter</span><span class="p">()</span>
     <span class="p">}</span>
 
-    <span class="k">func</span> <span class="nf">configureDateFormatter</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span><span class="p">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">NoStyle</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span><span class="p">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">FullStyle</span>
-    <span class="p">}</span></code></pre></div>
+    <span class="kd">func</span> <span class="nf">configureDateFormatter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
 
-<p>And we need to do that for every property… not very practical.<br />
+<p>And we need to do that for every property… not very practical.
 To prevent cluttering up <code class="highlighter-rouge">init()</code> with all the property initialization values we could do that when we declare <code class="highlighter-rouge">dateFormatter</code>:</p>
 
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">class</span> <span class="nl">MyTableViewController</span><span class="p">:</span> <span class="bp">NSObject</span><span class="p">,</span> <span class="bp">UITableViewDataSource</span> <span class="p">{</span>
-    <span class="k">let</span> <span class="n">dateFormatter</span> <span class="o">=</span> <span class="bp">NSDateFormatter</span><span class="p">()</span>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">MyTableViewController</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UITableViewDataSource</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
 
-    <span class="kr">override</span> <span class="k">init</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">configureDateFormatter</span><span class="p">()</span>
+    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+        <span class="k">self</span><span class="o">.</span><span class="nf">configureDateFormatter</span><span class="p">()</span>
     <span class="p">}</span>
 
-    <span class="k">func</span> <span class="n">configureDateFormatter</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span><span class="p">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">NoStyle</span>
-        <span class="nb">self</span><span class="p">.</span><span class="n">dateFormatter</span><span class="p">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">FullStyle</span>
+    <span class="kd">func</span> <span class="nf">configureDateFormatter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
     <span class="p">}</span>
 
     <span class="c1">// protocol implementation skipped, not relevant in this example</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>This is better and the property type is now inferred.</p>
 
@@ -205,16 +213,18 @@ To prevent cluttering up <code class="highlighter-rouge">init()</code> with all 
 
 <p>Here is how:</p>
 
-<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">class</span> <span class="nl">MyTableViewController</span><span class="p">:</span> <span class="bp">NSObject</span><span class="p">,</span> <span class="bp">UITableViewDataSource</span> <span class="p">{</span>
-    <span class="k">let</span> <span class="nl">dateFormatter</span><span class="p">:</span> <span class="bp">NSDateFormatter</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="n">dateFormatter</span> <span class="o">=</span> <span class="bp">NSDateFormatter</span><span class="p">()</span>
-        <span class="n">dateFormatter</span><span class="p">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">NoStyle</span>
-        <span class="n">dateFormatter</span><span class="p">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="p">.</span><span class="n">FullStyle</span>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">MyTableViewController</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UITableViewDataSource</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">dateFormatter</span><span class="p">:</span> <span class="kt">NSDateFormatter</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
         <span class="k">return</span> <span class="n">dateFormatter</span>
     <span class="p">}()</span>
 
     <span class="c1">// protocol implementation skipped, not relevant in this example</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre>
+</div>
 
 <p>As you can see, we do not need to override <code class="highlighter-rouge">init()</code> anymore! And we have all <code class="highlighter-rouge">dataFormatter</code> initialization and configuration in one place.</p>
 
