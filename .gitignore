@@ -42,10 +42,8 @@ node_modules
 bower_components
 
 # Bundler
-Gemfile.lock
 .bundle
 .bin
 
 # Fastlane
 fastlane/report.xml
-
