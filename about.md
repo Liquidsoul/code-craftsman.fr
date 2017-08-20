@@ -11,6 +11,8 @@ I was the Lead Developer of the first version of [LeKiosk app](https://itunes.ap
 
 I made the *BEYOND Touch* apps on [iOS](http://itunes.apple.com/app/beyond-touch/id691908718) and [Android](http://play.google.com/store/apps/details?id=com.quanticdream.beyondtouch) for the PS3 game *Beyond: Two Souls*.
 
+I was the iOS Lead Developer [@Viadeo](https://www.viadeo.com).
+
 I you want to reach me, follow one of the links below!
 
 {% include infos.html %}
