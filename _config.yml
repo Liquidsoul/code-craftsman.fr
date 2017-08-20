@@ -10,9 +10,9 @@ kramdown:
 #
 # Use of `relative_permalinks` ensures post links from the index work properly.
 permalink:           pretty
-relative_permalinks: true
 
 # Setup
+plugins:             [jekyll-paginate]
 title:               Code Craftsman
 tagline:             'Software craftsmanship and iOS development'
 description:         'This is my personal blog where I talk about software.'
