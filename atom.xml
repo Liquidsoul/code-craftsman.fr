@@ -4,7 +4,7 @@
  <title>Code Craftsman</title>
  <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
  <link href="http://code-craftsman.fr/"/>
- <updated>2017-09-24T22:27:23+02:00</updated>
+ <updated>2017-09-24T22:32:28+02:00</updated>
  <id>http://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
@@ -13,11 +13,11 @@
 
  
  <entry>
-   <title>Generating your `struct`'s `init`</title>
+   <title>Generating the struct's initializer</title>
    <link href="http://code-craftsman.fr/2017/09/24/AutoInit/"/>
    <updated>2017-09-24T00:00:00+02:00</updated>
    <id>http://code-craftsman.fr/2017/09/24/AutoInit</id>
-   <content type="html">&lt;h1 id=&quot;structs-default-initializer&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt;s default initializer&lt;/h1&gt;
+   <content type="html">&lt;h1 id=&quot;struct-default-initializer&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; default initializer&lt;/h1&gt;
 
 &lt;p&gt;Swift has an awesome feature regarding &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt;s and their initializer. By default, an initializer is generated so you can create your &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; with the content you want:&lt;/p&gt;
 
