@@ -5,4 +5,4 @@ if ! which bundle; then
   exit 1
 fi
 
-bundle --path=.bundle --binstubs=.bin --verbose
+bundle --path=.bundle --binstubs=.bin
