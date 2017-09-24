@@ -85,6 +85,10 @@
     
       
         
+      
+    
+      
+        
           <a class="sidebar-nav-item" href="/posts/">All posts</a>
         
       
@@ -133,59 +137,102 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="/2015/12/21/Swift_TDD_and_Playgrounds/">
-        Swift, TDD and Playgrounds
+      <a href="/2016/01/21/Swift_property_initialization/">
+        Swift property initialization
       </a>
     </h1>
 
-    <span class="post-date">21 Dec 2015</span>
+    <span class="post-date">21 Jan 2016</span>
 
-    <p>Lately, I have been doing some TDD in Swift.</p>
+    <p>Let’s say we want to share a <code class="highlighter-rouge">NSDateFromatter</code> instance in the scope of a class, for example, a <code class="highlighter-rouge">UITableViewDataSource</code>. We would declare it like this:</p>
 
-<p>While following the <code class="highlighter-rouge">red, green, refactor</code> cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.
-So, I asked myself if there was not a faster way of doing this in Swift.</p>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">MyTableViewController</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UITableViewDataSource</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">dateFormatter</span><span class="p">:</span> <span class="kt">NSDateFormatter</span>
 
-<p>And the answer came quite easily. What do we use when we want to test something quickly in Swift?</p>
+    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+    <span class="p">}</span>
 
-<p>That’s right, <em>Playgrounds</em>!</p>
+    <span class="c1">// protocol implementation skipped, not relevant in this example</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
-<p>So I have looked into how I could do TDD using a Playground with the following objective in mind:</p>
+<p>As you can see, we need to initialize <code class="highlighter-rouge">dateFormatter</code> in <code class="highlighter-rouge">init()</code>. And to be sure the formatter is correctly configured, we would need to do it there too:</p>
 
-<p><code class="highlighter-rouge">The final code must be easily moved into a classic Xcode project.</code></p>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code>    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
 
-<h2 id="xctest-in-playgrounds">XCTest in Playgrounds</h2>
+<p>I like to have tiny functions with explicit names.
+But, as of today, we cannot factorize all of this in a method of <code class="highlighter-rouge">MyTableViewController</code> because <code class="highlighter-rouge">self</code> is not initialized. We need to split instanciation and configuration:</p>
 
-<p>When we do unit tests in Xcode, we use the <code class="highlighter-rouge">XCTest</code> framework.
-It gives us the <code class="highlighter-rouge">XCTestCase</code> class to run our tests and <code class="highlighter-rouge">XCTAssert</code> methods to check the results.
-The class is not necessary in our case because we can call the functions direclty to run the tests. But, the methods are.</p>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code>    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+        <span class="k">self</span><span class="o">.</span><span class="nf">configureDateFormatter</span><span class="p">()</span>
+    <span class="p">}</span>
 
-<p>Yet, when you try to import <code class="highlighter-rouge">XCTest</code> in your iOS playground you will have this:</p>
+    <span class="kd">func</span> <span class="nf">configureDateFormatter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
 
-<p><code class="highlighter-rouge">error: cannot load underlying module for 'XCTest'</code></p>
+<p>And we need to do that for every property… not very practical.
+To prevent cluttering up <code class="highlighter-rouge">init()</code> with all the property initialization values we could do that when we declare <code class="highlighter-rouge">dateFormatter</code>:</p>
 
-<p>In order to use <code class="highlighter-rouge">XCTest</code> directly, you have to use an OSX playground.</p>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">MyTableViewController</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UITableViewDataSource</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
 
-<p><img src="/public/images/XCTestPlayground/OSX_Playground.png" alt="OSX Playground" /></p>
+    <span class="k">override</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+        <span class="k">self</span><span class="o">.</span><span class="nf">configureDateFormatter</span><span class="p">()</span>
+    <span class="p">}</span>
 
-<p>Once done, using a method like <code class="highlighter-rouge">XCTFail</code> will show you when there is a problem.</p>
+    <span class="kd">func</span> <span class="nf">configureDateFormatter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
+    <span class="p">}</span>
 
-<p><img src="/public/images/XCTestPlayground/XCTest_exception.png" alt="XCTFail error" /></p>
+    <span class="c1">// protocol implementation skipped, not relevant in this example</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
-<p>But, as you can see, the error is shown on the line of the top-most caller, not on the line where the error actually is. This can prove finding a failing test cumbersome.</p>
+<p>This is better and the property type is now inferred.</p>
 
-<h2 id="the-xctestplayground-workaround">The XCTestPlayground workaround</h2>
+<p>But I am not quite satisfied with this.</p>
 
-<p>To address these issues, I had the idea to implement my own <code class="highlighter-rouge">XCT</code> methods using a nice feature of Playgrounds: <code class="highlighter-rouge">the display of the return value</code></p>
+<p>Isn’t there a way to do this in Swift without declaring and calling <code class="highlighter-rouge">configureDateFormatter()</code>? Which is, by the way, only called once during the lifetime of the object?</p>
 
-<p>Here is the result:</p>
+<p><strong>Closures</strong>!</p>
 
-<p><img src="/public/images/XCTestPlayground/XCTestPlayground.png" alt="XCTestPlayground_example" /></p>
+<p>Here is how:</p>
 
-<p>With that, you can write test code in a Playground and have direct feedback on which assert passes and which does not.</p>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">MyTableViewController</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UITableViewDataSource</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">dateFormatter</span><span class="p">:</span> <span class="kt">NSDateFormatter</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">dateFormatter</span> <span class="o">=</span> <span class="kt">NSDateFormatter</span><span class="p">()</span>
+        <span class="n">dateFormatter</span><span class="o">.</span><span class="n">dateStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">NoStyle</span>
+        <span class="n">dateFormatter</span><span class="o">.</span><span class="n">timeStyle</span> <span class="o">=</span> <span class="o">.</span><span class="kt">FullStyle</span>
+        <span class="k">return</span> <span class="n">dateFormatter</span>
+    <span class="p">}()</span>
 
-<p>You can find my implementation of the asserts in <a href="https://github.com/Liquidsoul/XCTestPlayground">this repository</a>. If you want to use this, just add the <code class="highlighter-rouge">XCTestPlayground.swift</code> file to your Playground’s sources folder.</p>
+    <span class="c1">// protocol implementation skipped, not relevant in this example</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
-<p>Note that I did not implement all the functions. For example, the <code class="highlighter-rouge">WithAccuracy</code> ones are missing.</p>
+<p>As you can see, we do not need to override <code class="highlighter-rouge">init()</code> anymore! And we have all <code class="highlighter-rouge">dataFormatter</code> initialization and configuration in one place.</p>
+
+<p>Hope that someone will find this useful!</p>
 
   </div>
   

@@ -137,59 +137,16 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="/2015/12/21/Swift_TDD_and_Playgrounds/">
-        Swift, TDD and Playgrounds
+      <a href="/2015/07/30/my-very-first-post/">
+        My very first post
       </a>
     </h1>
 
-    <span class="post-date">21 Dec 2015</span>
+    <span class="post-date">30 Jul 2015</span>
 
-    <p>Lately, I have been doing some TDD in Swift.</p>
+    <p>Hi!</p>
 
-<p>While following the <code class="highlighter-rouge">red, green, refactor</code> cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.
-So, I asked myself if there was not a faster way of doing this in Swift.</p>
-
-<p>And the answer came quite easily. What do we use when we want to test something quickly in Swift?</p>
-
-<p>That’s right, <em>Playgrounds</em>!</p>
-
-<p>So I have looked into how I could do TDD using a Playground with the following objective in mind:</p>
-
-<p><code class="highlighter-rouge">The final code must be easily moved into a classic Xcode project.</code></p>
-
-<h2 id="xctest-in-playgrounds">XCTest in Playgrounds</h2>
-
-<p>When we do unit tests in Xcode, we use the <code class="highlighter-rouge">XCTest</code> framework.
-It gives us the <code class="highlighter-rouge">XCTestCase</code> class to run our tests and <code class="highlighter-rouge">XCTAssert</code> methods to check the results.
-The class is not necessary in our case because we can call the functions direclty to run the tests. But, the methods are.</p>
-
-<p>Yet, when you try to import <code class="highlighter-rouge">XCTest</code> in your iOS playground you will have this:</p>
-
-<p><code class="highlighter-rouge">error: cannot load underlying module for 'XCTest'</code></p>
-
-<p>In order to use <code class="highlighter-rouge">XCTest</code> directly, you have to use an OSX playground.</p>
-
-<p><img src="/public/images/XCTestPlayground/OSX_Playground.png" alt="OSX Playground" /></p>
-
-<p>Once done, using a method like <code class="highlighter-rouge">XCTFail</code> will show you when there is a problem.</p>
-
-<p><img src="/public/images/XCTestPlayground/XCTest_exception.png" alt="XCTFail error" /></p>
-
-<p>But, as you can see, the error is shown on the line of the top-most caller, not on the line where the error actually is. This can prove finding a failing test cumbersome.</p>
-
-<h2 id="the-xctestplayground-workaround">The XCTestPlayground workaround</h2>
-
-<p>To address these issues, I had the idea to implement my own <code class="highlighter-rouge">XCT</code> methods using a nice feature of Playgrounds: <code class="highlighter-rouge">the display of the return value</code></p>
-
-<p>Here is the result:</p>
-
-<p><img src="/public/images/XCTestPlayground/XCTestPlayground.png" alt="XCTestPlayground_example" /></p>
-
-<p>With that, you can write test code in a Playground and have direct feedback on which assert passes and which does not.</p>
-
-<p>You can find my implementation of the asserts in <a href="https://github.com/Liquidsoul/XCTestPlayground">this repository</a>. If you want to use this, just add the <code class="highlighter-rouge">XCTestPlayground.swift</code> file to your Playground’s sources folder.</p>
-
-<p>Note that I did not implement all the functions. For example, the <code class="highlighter-rouge">WithAccuracy</code> ones are missing.</p>
+<p>This is my first blog post ever and, hopefully, it will be the first of many to come.</p>
 
   </div>
   
@@ -197,11 +154,11 @@ The class is not necessary in our case because we can call the functions direclt
 
 <div class="pagination">
   
-    <a class="pagination-item older" href="/page4">Older</a>
+    <span class="pagination-item older">Older</span>
   
   
     
-      <a class="pagination-item newer" href="/page2">Newer</a>
+      <a class="pagination-item newer" href="/page5">Newer</a>
     
   
 </div>
