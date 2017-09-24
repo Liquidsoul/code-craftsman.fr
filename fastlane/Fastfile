@@ -17,7 +17,6 @@ end
 desc "Remove the _site folder"
 lane :clean do |options|
   if Dir.exists?(site_folder)
-    require 'fileutils'
     FileUtils.rm_rf site_folder
   end
 end
