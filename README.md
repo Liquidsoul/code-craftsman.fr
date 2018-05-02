@@ -10,36 +10,32 @@ The markdown source of the site is in the `source` branch while the result pages
 
 I use [Fastlane](http://fastlane.tools) to define my deployment pipeline.  
 Because the tools used here are in Ruby, I use [Bundler](http://bundler.io) to manage my dependencies.  
+And to have a single point of entry that is available everywhere, I use `make`.
+
 Everything that follows must be run on the `source` branch.
-
-### Prerequisites
-
-First, run `setup.sh`. This will run `bundler` and install the tools locally just for the repo.
 
 ### Build
 
 To build the site into the `_site` folder use:
 
-    $ bundle exec jekyll build
-
-or
-
-    $ bundle exec fastlane build
+    $ make build
 
 ### Serve
 
 To serve the site run:
 
-    $ bundle exec jekyll serve
-
-or
-
-    $ bundle exec fastlane serve
-
-Note that in this case, you'll have to manually kill the jekyll instance. See the output for details. 
+    $ make serve
 
 ### Deploy
 
 To deploy the site into its dedicated branch run:
 
-    $ bundle exec fastlane deploy
+    $ make deploy
+
+Once this is done, you'll have to push the changes to the remote to complete the deployment.
+
+### Other
+
+You can see all the available `make` commands using:
+
+    $ make help
