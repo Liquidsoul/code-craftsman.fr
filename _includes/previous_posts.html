@@ -7,7 +7,7 @@
         <h3>
           <a href="{{ site.baseurl }}{{ previous_post.url }}">
             {{ previous_post.title }}
-            <small>{{ previous_post.date | date_to_string }}</small>
+            <small>{{ previous_post.date | date: "%Y-%m-%d" }}</small>
             <p><small>{{previous_post.content | strip_html | truncatewords:25, '…' }}</small></p>
           </a>
         </h3>
