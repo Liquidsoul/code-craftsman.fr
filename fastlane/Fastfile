@@ -68,11 +68,6 @@ private_lane :push_local_clone do |options|
   sh cmd.join(' && ')
 end
 
-desc "Launch a local server for the blog"
-lane :serve do |options|
-  sh "cd .. && bundle exec jekyll serve --watch --drafts --detach"
-end
-
 after_all do |lane|
 end
 
