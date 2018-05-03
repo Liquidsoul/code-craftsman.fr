@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>Code Craftsman</title>
- <link href="http://code-craftsman.fr/atom.xml" rel="self"/>
- <link href="http://code-craftsman.fr/"/>
- <updated>2018-05-02T15:00:22+02:00</updated>
- <id>http://code-craftsman.fr</id>
+ <link href="https://code-craftsman.fr/atom.xml" rel="self"/>
+ <link href="https://code-craftsman.fr/"/>
+ <updated>2018-05-03T11:32:16+02:00</updated>
+ <id>https://code-craftsman.fr</id>
  <author>
    <name>Sébastien Duperron</name>
    <email>contact@code-craftsman.fr</email>
@@ -14,9 +14,9 @@
  
  <entry>
    <title>Generating the struct's initializer</title>
-   <link href="http://code-craftsman.fr/2017/09/24/AutoInit/"/>
+   <link href="https://code-craftsman.fr/2017/09/24/AutoInit/"/>
    <updated>2017-09-24T00:00:00+02:00</updated>
-   <id>http://code-craftsman.fr/2017/09/24/AutoInit</id>
+   <id>https://code-craftsman.fr/2017/09/24/AutoInit</id>
    <content type="html">&lt;h1 id=&quot;struct-default-initializer&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; default initializer&lt;/h1&gt;
 
 &lt;p&gt;Swift has an awesome feature regarding &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt;s and their initializer. By default, an initializer is generated so you can create your &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; with the content you want:&lt;/p&gt;
@@ -130,9 +130,9 @@ It will take the code between the &lt;code class=&quot;highlighter-rouge&quot;&g
  
  <entry>
    <title>Swift property initialization</title>
-   <link href="http://code-craftsman.fr/2016/01/21/Swift_property_initialization/"/>
+   <link href="https://code-craftsman.fr/2016/01/21/Swift_property_initialization/"/>
    <updated>2016-01-21T00:00:00+01:00</updated>
-   <id>http://code-craftsman.fr/2016/01/21/Swift_property_initialization</id>
+   <id>https://code-craftsman.fr/2016/01/21/Swift_property_initialization</id>
    <content type="html">&lt;p&gt;Let’s say we want to share a &lt;code class=&quot;highlighter-rouge&quot;&gt;NSDateFromatter&lt;/code&gt; instance in the scope of a class, for example, a &lt;code class=&quot;highlighter-rouge&quot;&gt;UITableViewDataSource&lt;/code&gt;. We would declare it like this:&lt;/p&gt;
 
 &lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MyTableViewController&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;NSObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;UITableViewDataSource&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -227,9 +227,9 @@ To prevent cluttering up &lt;code class=&quot;highlighter-rouge&quot;&gt;init()&
  
  <entry>
    <title>Swift, TDD and Playgrounds</title>
-   <link href="http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playgrounds/"/>
+   <link href="https://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playgrounds/"/>
    <updated>2015-12-21T00:00:00+01:00</updated>
-   <id>http://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playgrounds</id>
+   <id>https://code-craftsman.fr/2015/12/21/Swift_TDD_and_Playgrounds</id>
    <content type="html">&lt;p&gt;Lately, I have been doing some TDD in Swift.&lt;/p&gt;
 
 &lt;p&gt;While following the &lt;code class=&quot;highlighter-rouge&quot;&gt;red, green, refactor&lt;/code&gt; cycle using the default Xcode test target, I found that deploying on the simulator could easily take several seconds.
@@ -281,9 +281,9 @@ The class is not necessary in our case because we can call the functions direclt
  
  <entry>
    <title>Testing a Reactive Cocoa App that uses CocoaPods</title>
-   <link href="http://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/"/>
+   <link href="https://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods/"/>
    <updated>2015-08-11T00:00:00+02:00</updated>
-   <id>http://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods</id>
+   <id>https://code-craftsman.fr/2015/08/11/Testing-Reactive-Cocoa-App-that-use-CocoaPods</id>
    <content type="html">&lt;p&gt;Last weekend, I stumbled across something while trying to learn MVVM.&lt;/p&gt;
 
 &lt;p&gt;I was playing with the &lt;a href=&quot;http://www.raywenderlich.com/74106/mvvm-tutorial-with-reactivecocoa-part-1&quot;&gt;Colin Eberhardt’s tutorial&lt;/a&gt; which explains how to set up the pattern using ReactiveCocoa. As I was progressing through the &lt;a href=&quot;http://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2&quot;&gt;second part&lt;/a&gt;, I saw this note:
@@ -367,9 +367,9 @@ By default, tests are run against the Host Application (see your Project &amp;gt
  
  <entry>
    <title>Saving CoreData objects</title>
-   <link href="http://code-craftsman.fr/2015/08/04/saving-core-data-objects/"/>
+   <link href="https://code-craftsman.fr/2015/08/04/saving-core-data-objects/"/>
    <updated>2015-08-04T00:00:00+02:00</updated>
-   <id>http://code-craftsman.fr/2015/08/04/saving-core-data-objects</id>
+   <id>https://code-craftsman.fr/2015/08/04/saving-core-data-objects</id>
    <content type="html">&lt;p&gt;The associated playground can be found &lt;a href=&quot;https://github.com/Liquidsoul/coredata-saving-contexts&quot;&gt;in this repo&lt;/a&gt;!&lt;/p&gt;
 
 &lt;h2 id=&quot;the-context&quot;&gt;The context&lt;/h2&gt;
@@ -622,9 +622,9 @@ When you start playing with entity attributes, you’ll need to perform some &lt
  
  <entry>
    <title>My very first post</title>
-   <link href="http://code-craftsman.fr/2015/07/30/my-very-first-post/"/>
+   <link href="https://code-craftsman.fr/2015/07/30/my-very-first-post/"/>
    <updated>2015-07-30T00:00:00+02:00</updated>
-   <id>http://code-craftsman.fr/2015/07/30/my-very-first-post</id>
+   <id>https://code-craftsman.fr/2015/07/30/my-very-first-post</id>
    <content type="html">&lt;p&gt;Hi!&lt;/p&gt;
 
 &lt;p&gt;This is my first blog post ever and, hopefully, it will be the first of many to come.&lt;/p&gt;
