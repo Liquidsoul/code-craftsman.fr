@@ -17,7 +17,7 @@ title:               Code Craftsman
 tagline:             'Software craftsmanship and iOS development'
 description:         'This is my personal blog where I talk about software.'
 domain_name:         code-craftsman.fr
-url:                 http://code-craftsman.fr
+url:                 https://code-craftsman.fr
 baseurl:             ''
 paginate:            1
 
